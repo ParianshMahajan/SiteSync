@@ -1,0 +1,28 @@
+{
+  "files": {
+    "main.css": "/static/css/main.aad83d3a.css",
+    "main.js": "/static/js/main.55b9fb30.js",
+    "static/media/banner.jpg": "/static/media/banner.6d4c3d3e264ffe6923fa.jpg",
+    "static/media/Inter.ttf": "/static/media/Inter.853e01975d2783d9fa29.ttf",
+    "static/media/whyccs.png": "/static/media/whyccs.071379489f72c0439b5e.png",
+    "static/media/4.jpg": "/static/media/4.4c053f17b88ce09a3588.jpg",
+    "static/media/5.jpg": "/static/media/5.a311edd54e41327f6501.jpg",
+    "static/media/3.jpg": "/static/media/3.771e6916ba25f7ecc5af.jpg",
+    "static/media/2.jpg": "/static/media/2.c2db5d9bc65c3900681e.jpg",
+    "static/media/1.jpg": "/static/media/1.8d95c78563c6e46bc004.jpg",
+    "static/media/Bg23.png": "/static/media/Bg23.648d962693c3e85c6c15.png",
+    "static/media/load.gif": "/static/media/load.df294bc9058fbefa3bb4.gif",
+    "static/media/bgbgbgbg.jpg": "/static/media/bgbgbgbg.c5d623cddd29cd1ccc15.jpg",
+    "static/media/user.png": "/static/media/user.a110d1c37e64c1882825.png",
+    "static/media/BGbb.png": "/static/media/BGbb.9d3ea4fdfb0644e0d95c.png",
+    "static/media/CCS_logo.png": "/static/media/CCS_logo.702a486b6e9f0ac24171.png",
+    "static/media/ccs-bulb.png": "/static/media/ccs-bulb.360a95acc49978c94a77.png",
+    "index.html": "/index.html",
+    "main.aad83d3a.css.map": "/static/css/main.aad83d3a.css.map",
+    "main.55b9fb30.js.map": "/static/js/main.55b9fb30.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.aad83d3a.css",
+    "static/js/main.55b9fb30.js"
+  ]
+}
