@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  api:
+    image: pariansh/testServer
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "2123:2123"
+    volumes:
+      - "./logs/:/app/logs/"
+    restart: always
