@@ -9,5 +9,5 @@ services:
     ports:
       - "2123:2123"
     volumes:
-      - "./logs/:/app/logs/"
+      - "/home/Pariansh/frontend:/app/uploads"
     restart: always

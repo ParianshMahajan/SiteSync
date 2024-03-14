@@ -1,0 +1,69 @@
+CREATE TABLE SalesPeople (
+    Snum INT PRIMARY KEY,
+    Sname VARCHAR(50) UNIQUE,
+    City VARCHAR(50),
+    Comm DECIMAL(5,2)
+);
+
+CREATE TABLE Customers (
+    Cnum INT PRIMARY KEY,
+    Cname VARCHAR(50),
+    City VARCHAR(50) NOT NULL,
+    Snum INT,
+    FOREIGN KEY (Snum) REFERENCES SalesPeople(Snum)
+);
+
+CREATE TABLE Orders (
+    Onum INT PRIMARY KEY,
+    Amt DECIMAL(10,2),
+    Odate DATE,
+    Cnum INT,
+    Snum INT,
+    FOREIGN KEY (Cnum) REFERENCES Customers(Cnum),
+    FOREIGN KEY (Snum) REFERENCES SalesPeople(Snum)
+);
+
+
+
+INSERT INTO SalesPeople VALUES (1001, 'Peel', 'London', 0.12);
+INSERT INTO SalesPeople VALUES (1002, 'Serres', 'Sanjose', 0.13);
+INSERT INTO SalesPeople VALUES (1003, 'Axelrod', 'New York', 0.10);
+INSERT INTO SalesPeople VALUES (1004, 'Motika', 'London', 0.11);
+INSERT INTO SalesPeople VALUES (1007, 'Rifkin', 'Barcelona', 0.15);
+
+
+INSERT INTO Customers VALUES (2001, 'Hoffman', 'London', 1001);
+INSERT INTO Customers VALUES (2002, 'Giovanni', 'Rome', 1003);
+INSERT INTO Customers VALUES (2003, 'Liu', 'Sanjose', 1002);
+INSERT INTO Customers VALUES (2004, 'Grass', 'Berlin', 1002);
+INSERT INTO Customers VALUES (2006, 'Clemens', 'London', 1001);
+INSERT INTO Customers VALUES (2007, 'Pereira', 'Rome', 1004);
+INSERT INTO Customers VALUES (2008, 'Cisneros', 'Sanjose', 1007);
+
+
+
+INSERT INTO Orders VALUES (3001, 18.69, TO_DATE('1990-10-03','YYYY-MM-DD'), 2008, 1007);
+INSERT INTO Orders VALUES (3002, 1900.10, TO_DATE('1990-10-03','YYYY-MM-DD'), 2007, 1004);
+INSERT INTO Orders VALUES (3003, 767.19, TO_DATE('1990-10-03','YYYY-MM-DD'), 2001, 1001);
+INSERT INTO Orders VALUES (3005, 5160.45, TO_DATE('1990-10-03','YYYY-MM-DD'), 2003, 1002);
+INSERT INTO Orders VALUES (3006, 1098.16, TO_DATE('1990-10-03','YYYY-MM-DD'), 2008, 1007);
+INSERT INTO Orders VALUES (3007, 75.75, TO_DATE('1990-10-04','YYYY-MM-DD'), 2004, 1002);
+INSERT INTO Orders VALUES (3008, 4273.00, TO_DATE('1990-10-05','YYYY-MM-DD'), 2006, 1001);
+INSERT INTO Orders VALUES (3009, 1713.23, TO_DATE('1990-10-04','YYYY-MM-DD'), 2002, 1003);
+INSERT INTO Orders VALUES (3010, 1309.95, TO_DATE('1990-10-06','YYYY-MM-DD'), 2004, 1002);
+INSERT INTO Orders VALUES (3011, 9891.88, TO_DATE('1990-10-06','YYYY-MM-DD'), 2006, 1001);
+
+Select * from SalesPeople;
+Select * from Customers;
+Select * from Orders;
+
+SELECT * FROM SalesPeople
+WHERE Snum in (SELECT Snum FROM Orders WHERE Amt > 2000);
+
+SELECT Snum FROM Customers Group by Snum
+Having Count(Snum)>=2 ;
+
+SELECT S.Sname FROM SalesPeople S JOIN Customers C ON S.Snum = C.Snum
+GROUP BY S.Snum
+HAVING COUNT(DISTINCT C.Cnum) >= 2;
+
