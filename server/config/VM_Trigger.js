@@ -10,15 +10,21 @@ const connSettings = {
 const conn = new Client();
 
 module.exports.triggerScript = (fname, status) => {
-  let sc = "";
+  try {
+    
+  
+    let sc = "";
+    if (status === 20) {
+      sc = "create.sh";
+    }
   if (status === 0) {
-    sc = "create.sh";
+    sc = "stop.sh";
   }
   if (status === 1) {
     sc = "start.sh";
   }
   if (status === -1) {
-    sc = "down.sh";
+    sc = "delete.sh";
   }
 
   const scriptPath = `${process.env.VMPath}/${fname}/${sc}`;
@@ -28,17 +34,24 @@ module.exports.triggerScript = (fname, status) => {
     // Modified exec command to use sudo with -S option
     conn.exec(`echo ${process.env.VMPassword} | sudo -S bash ${scriptPath}`, (err, stream) => {
       if (err) throw err;
-
+      
       stream.on('close', (code, signal) => {
         console.log(`Script execution ended with code ${code}`);
         conn.end();
+        return true;
       }).on('data', (data) => {
         console.log(`STDOUT: ${data}`);
       }).stderr.on('data', (data) => {
-        console.error(`STDERR: ${data}`);
+        throw new Error(`STDERR: ${data}`);
       });
     });
   });
-
+  
   conn.connect(connSettings);
+  
+
+  }catch (error) {
+    console.log(error.message);
+    return false;
+  }
 };

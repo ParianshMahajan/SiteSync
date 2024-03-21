@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { exec } = require('child_process');
 
-module.exports.createScript = async function createScript(fname, domain, fpath) {
+module.exports.createScript = async function createScript(fpath,fname,domain) {
     let content = `
     #!/bin/bash
 
@@ -59,7 +59,7 @@ module.exports.createScript = async function createScript(fname, domain, fpath) 
 
 
 
-module.exports.startScript = async function startScript(fname, domain, fpath) {
+module.exports.startScript = async function startScript(fpath,fname,domain) {
     let content = `
     #!/bin/bash
 
@@ -95,7 +95,7 @@ module.exports.startScript = async function startScript(fname, domain, fpath) {
 
 
 
-module.exports.stopScript = async function stopScript(fname, domain, fpath) {
+module.exports.stopScript = async function stopScript(fpath,fname,domain) {
     let content = `
     #!/bin/bash
 
@@ -109,6 +109,37 @@ module.exports.stopScript = async function stopScript(fname, domain, fpath) {
     # Check if the file was created successfully
     if [ $? -ne 0 ]; then
         echo "Error commenting file."
+        exit 1
+    fi
+
+    # Reload Nginx
+    echo "Reloading Nginx..."
+    sudo service nginx reload
+
+    # Check if Nginx reload was successful
+    if [ $? -eq 0 ]; then
+        echo "Nginx reloaded successfully!"
+    else
+        echo "Error reloading Nginx."
+    fi
+    `;
+
+    fs.writeFileSync(fpath, content);
+
+    console.log("Script created successfully");
+}
+
+module.exports.deleteScript = async function deleteScript(fpath,fname,domain) {
+    let content = `
+    #!/bin/bash
+
+    sudo rm /etc/nginx/sites-enabled/${fname}
+
+    echo "Nginx file deleted Successfully."
+
+    # Check if the file was created successfully
+    if [ $? -ne 0 ]; then
+        echo "Error deleting conf file."
         exit 1
     fi
 

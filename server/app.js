@@ -14,10 +14,15 @@ app.use(bodyParser.json({ limit: '100mb' }));
 app.use(bodyParser.urlencoded({ limit: '100mb', extended: true, parameterLimit: 50000 }));
 
 
-const FileRouter = require('./Routers/FileRouter.js');
+const UploadRouter = require('./Routers/UploadRouter.js');
+const SiteRouter = require('./Routers/SiteRouter.js');
 
 
 
+
+
+
+startRoutes();
 
 
 
@@ -26,8 +31,8 @@ app.listen(port, () => {
   console.log(`Server is listening on port ${port}`);
 });
 
-startRoutes();
 
 function startRoutes(){
-  app.use('/api',FileRouter);
+  app.use('/upload',UploadRouter);
+  app.use('/site',SiteRouter);
 }
