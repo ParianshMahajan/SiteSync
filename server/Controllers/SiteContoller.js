@@ -7,7 +7,7 @@ module.exports.StopSite = async function StopSite(req, res) {
         let site = await FrontendModel.findOne(req.body.id);
         if(site.Status == 1){
             site.Status = 0;
-            if(triggerScript(site.SiteFolder, 0)===false){
+            if(triggerScript(site.fname, 0)===false){
                 throw new Error("Script Execution Failed")
             }
             await site.save();
@@ -35,7 +35,7 @@ module.exports.StartSite = async function StartSite(req, res) {
         let site = await FrontendModel.findOne(req.body.id);
         if(site.Status == 0){
             site.Status = 1;
-            if(triggerScript(site.SiteFolder, 1)===false){
+            if(triggerScript(site.fname, 1)===false){
                 throw new Error("Script Execution Failed")
             }
             await site.save();
@@ -63,7 +63,7 @@ module.exports.DeleteSite = async function DeleteSite(req, res) {
     try {
         let site = await FrontendModel.findOne(req.body.id);
         if(deleteDns(site.DNSId)){
-            if(triggerScript(site.SiteFolder, -1===false)){
+            if(triggerScript(site.fname, -1===false)){
                 throw new Error("Script Execution Failed")
             }
             await site.remove();

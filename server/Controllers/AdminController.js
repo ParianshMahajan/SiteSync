@@ -1,0 +1,80 @@
+const jwt=require('jsonwebtoken');
+const FrontendModel = require('../Models/FrontendModel');
+const ADMIN_USERNAME=process.env.ADMIN_USERNAME;
+const ADMIN_PASSWORD=process.env.ADMIN_PASSWORD;
+const Secret_key=process.env.Secret_key;
+
+
+
+module.exports.createJWT=async(req,res)=>{
+    try {
+        let data=req.body;
+        if(data.UserName===ADMIN_USERNAME && data.Password===ADMIN_PASSWORD){
+            
+            let payload={
+                UserName:ADMIN_USERNAME,
+                Password:ADMIN_PASSWORD,
+            }
+
+            let token=jwt.sign(payload,Secret_key);
+
+            res.json({
+                token:token,
+                status:true
+            });
+        }
+        else{
+            throw new Error("Invalid Credentials");
+        }
+    
+        res.json({
+    
+        });
+    } catch (error) {
+        res.json({
+            message:error.message,
+            status:false
+        })
+    }
+};
+
+
+module.exports.AllSites=async(req,res)=>{
+    try {
+        let sites=await FrontendModel.find();
+
+        res.json({
+            status:true,
+            sites:sites
+        });
+        
+    } catch (error) {
+        res.json({
+            message:error.message,
+            status:false
+        })
+    }
+}
+
+
+module.exports.isAvailable=async(req,res)=>{
+    try {
+        let site=await FrontendModel.findOne({fname:req.body.Name});
+
+        if(site){
+            throw new Error("Site is not Available");
+        }
+        else{
+            res.json({
+                status:true,
+                message:"Site is Available"
+            });
+        }
+            
+    } catch (error) {
+        res.json({
+            message:error.message,
+            status:false
+        })
+    }
+}

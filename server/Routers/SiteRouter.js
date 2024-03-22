@@ -1,20 +1,21 @@
 const express = require('express');
 const { StopSite, StartSite, DeleteSite } = require('../Controllers/SiteContoller');
+const { isAdmin } = require('../Middlewares/AdminProtect');
 
 const SiteRouter = express.Router();
 
 
 SiteRouter
 .route('/stop')
-.post(StopSite)
+.post(isAdmin,StopSite)
 
 SiteRouter
 .route('/start')
-.post(StartSite)
+.post(isAdmin,StartSite)
 
 SiteRouter
 .route('/delete')
-.post(DeleteSite)
+.post(isAdmin,DeleteSite)
 
 
 

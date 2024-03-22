@@ -117,7 +117,7 @@ UploadRouter
         let siteData={
             SiteDNS:siteDNS,
             DNSId:dnsResult.id,
-            SiteFolder:fname,
+            fname:fname,
             fpath:extractionDir
         }
 

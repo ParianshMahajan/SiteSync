@@ -9,7 +9,7 @@ const FrontendSchema=new Schema({
     DNSId:{
         type:String
     },
-    SiteFolder:{
+    fname:{
         type:String
     },
     Status:{
