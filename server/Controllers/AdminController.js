@@ -5,6 +5,23 @@ const ADMIN_PASSWORD=process.env.ADMIN_PASSWORD;
 const Secret_key=process.env.Secret_key;
 
 
+module.exports.verifyLogIn = async function verifyLogIn(req, res) {
+    try {
+      res.json({
+        status: true,
+        message: "LOGGED IN",
+      });
+      
+    } catch (error) {
+      res.json({
+        message: error.message,
+        status: false,
+      });
+    }
+  };
+  
+  
+
 
 module.exports.createJWT=async(req,res)=>{
     try {
@@ -26,10 +43,6 @@ module.exports.createJWT=async(req,res)=>{
         else{
             throw new Error("Invalid Credentials");
         }
-    
-        res.json({
-    
-        });
     } catch (error) {
         res.json({
             message:error.message,

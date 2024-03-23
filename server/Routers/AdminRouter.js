@@ -1,5 +1,5 @@
 const express = require('express');
-const { createJWT, AllSites, isAvailable } = require('../Controllers/AdminController');
+const { createJWT, AllSites, isAvailable, verifyLogIn } = require('../Controllers/AdminController');
 const { isAdmin } = require('../Middlewares/AdminProtect');
 
 const AdminRouter = express.Router();
@@ -9,6 +9,12 @@ const AdminRouter = express.Router();
 AdminRouter
 .route('/')
 .post(createJWT)
+
+
+// Verify
+AdminRouter
+.route('/verify')
+.post(isAdmin,verifyLogIn)
 
 
 
