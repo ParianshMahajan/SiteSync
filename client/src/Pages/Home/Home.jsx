@@ -12,7 +12,7 @@ const Home = () => {
     fname: "",
   });
 
-  const url=config.apiUrl+'/api/upload';
+  const url=config.apiUrl+'/upload';
 
 
   const handleUpload = (e) => {

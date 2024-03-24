@@ -62,7 +62,7 @@ module.exports.StartSite = async function StartSite(req, res) {
 module.exports.DeleteSite = async function DeleteSite(req, res) {
     try {
         let site = await FrontendModel.findOne(req.body.id);
-        if(deleteDns(site.DNSId)){
+        if(await deleteDns(site.DNSId)){
             if(triggerScript(site.fname, -1===false)){
                 throw new Error("Script Execution Failed")
             }

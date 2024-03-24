@@ -42,7 +42,7 @@ module.exports.triggerScript = (fname, status) => {
       }).on('data', (data) => {
         console.log(`STDOUT: ${data}`);
       }).stderr.on('data', (data) => {
-        throw new Error(`STDERR: ${data}`);
+        // throw new Error(`STDERR: ${data}`);
       });
     });
   });

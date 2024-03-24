@@ -16,7 +16,9 @@ module.exports.createDns = async function createDns(fname) {
     }
     let response = await axios.post(url, data, { headers: headers });
     if (response.status === 200)
-        return response.data.result;
+        return {
+            id: response.data.result.id,
+            name: response.data.result.name};
     else
         return false;
 }

@@ -20,9 +20,6 @@ const AdminRouter = require('./Routers/AdminRouter.js');
 
 
 
-
-
-
 startRoutes();
 
 

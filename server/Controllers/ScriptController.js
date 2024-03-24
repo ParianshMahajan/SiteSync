@@ -2,7 +2,13 @@ const fs = require('fs');
 const path = require('path');
 const { exec } = require('child_process');
 
-module.exports.createScript = async function createScript(fpath,fname,domain) {
+module.exports.createScript = async function createScript(fpath,fname,domain,framework) {
+    
+    let redirects="$uri $uri/ =404"
+    if(framework==true){
+        redirects="\$uri \$uri/ /index.html"
+    }
+
     let content = `
     #!/bin/bash
 
@@ -18,7 +24,7 @@ module.exports.createScript = async function createScript(fpath,fname,domain) {
         server_name ${domain};
 
         location / {
-            try_files \$uri \$uri/ /index.html;
+            try_files ${redirects};
         }
     }"
 

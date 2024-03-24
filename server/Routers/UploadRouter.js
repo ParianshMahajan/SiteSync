@@ -66,10 +66,12 @@ UploadRouter
 
       const jsonData = JSON.parse(req.body.data);
       const  fname = jsonData.fname;
+      const  framework = jsonData.framework;
 
 
       //Creating dns
-      let dnsResult=createDns(fname);
+      let dnsResult=await createDns(fname);
+      console.log(dnsResult);
       if(dnsResult==false){
         return res.json({
           message:'DNS Creation Failed',
@@ -108,14 +110,14 @@ UploadRouter
 
       //   Adding Scripts
 
-        createScript(path.join(extractionDir, 'create.sh'),fname,dnsResult.name);
+        createScript(path.join(extractionDir, 'create.sh'),fname,dnsResult.name,framework);
         startScript(path.join(extractionDir, 'start.sh'),fname);
         stopScript(path.join(extractionDir, 'stop.sh'),fname);
         deleteScript(path.join(extractionDir, 'delete.sh'),fname);
 
 
         let siteData={
-            SiteDNS:siteDNS,
+            SiteDNS:dnsResult.name,
             DNSId:dnsResult.id,
             fname:fname,
             fpath:extractionDir

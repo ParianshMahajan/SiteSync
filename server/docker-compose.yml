@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   api:
-    image: pariansh/testServer
+    image: pariansh/testserver
     build:
       context: .
       dockerfile: ./Dockerfile

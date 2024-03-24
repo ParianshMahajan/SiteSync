@@ -1,5 +1,5 @@
 const config  = {
-    apiUrl: 'http://localhost:2123',
+    apiUrl: 'https://testing.pariansh.tech',
 }
 
 
