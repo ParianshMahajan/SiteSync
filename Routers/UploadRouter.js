@@ -110,10 +110,10 @@ UploadRouter
 
       //   Adding Scripts
 
-        createScript(path.join(extractionDir, 'create.sh'),fname,dnsResult.name,framework);
-        startScript(path.join(extractionDir, 'start.sh'),fname);
-        stopScript(path.join(extractionDir, 'stop.sh'),fname);
-        deleteScript(path.join(extractionDir, 'delete.sh'),fname);
+        await createScript(path.join(extractionDir, 'create.sh'),fname,dnsResult.name,framework);
+        await startScript(path.join(extractionDir, 'start.sh'),fname);
+        await stopScript(path.join(extractionDir, 'stop.sh'),fname);
+        await deleteScript(path.join(extractionDir, 'delete.sh'),fname);
 
 
         let siteData={
@@ -124,7 +124,7 @@ UploadRouter
         }
 
         let site=await FrontendModel.create(siteData);
-        triggerScript(fname,20); 
+        await triggerScript(fname,20); 
       
         res.json({
           message: "Site Deployed Successfully",
