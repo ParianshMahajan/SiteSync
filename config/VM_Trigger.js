@@ -12,6 +12,7 @@ const conn = new Client();
 module.exports.triggerScript = (fname, status) => {
   try {
     
+    console.log("hi");
   
     let sc = "";
     if (status === 20) {
@@ -51,6 +52,7 @@ module.exports.triggerScript = (fname, status) => {
   
 
   }catch (error) {
+    console.log("Error in triggerScript");
     console.log(error.message);
     return false;
   }
