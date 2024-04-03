@@ -4,9 +4,9 @@ const { exec } = require('child_process');
 
 module.exports.createScript = async function createScript(fpath,fname,domain,framework) {
     
-    let redirects="$uri $uri/ =404"
+    let redirects="\\$uri \\$uri/ =404"
     if(framework==true){
-        redirects="\$uri \$uri/ /index.html"
+        redirects="\\$uri \\$uri/ /index.html"
     }
 
     let content = `

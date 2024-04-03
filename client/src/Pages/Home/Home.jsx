@@ -10,6 +10,7 @@ const Home = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [data, setData] = useState({
     fname: "",
+    framework: false,
   });
 
   const url=config.apiUrl+'/upload';
@@ -65,7 +66,11 @@ const Home = () => {
   
   function handleChange(e) {
     const newdata = { ...data };
-    newdata[e.target.id] = e.target.value;
+    if (e.target.type === "checkbox") {
+      newdata[e.target.id] = e.target.checked;
+    } else {
+      newdata[e.target.id] = e.target.value;
+    }
     setData(newdata);
   }
 
@@ -84,6 +89,17 @@ const Home = () => {
         id="fname"
         value={data.fname}
         placeholder="File Name"
+        onChange={(e)=>handleChange(e)}
+        required={true}
+      />
+      <br/>
+      <label >Framework</label>
+
+      <input
+        type="checkbox"
+        id="framework"
+        value={data.framework}
+        placeholder="Framework"
         onChange={(e)=>handleChange(e)}
         required={true}
       />

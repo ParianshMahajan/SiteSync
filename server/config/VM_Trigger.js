@@ -28,6 +28,7 @@ module.exports.triggerScript = (fname, status) => {
   }
 
   const scriptPath = `${process.env.VMPath}/${fname}/${sc}`;
+  console.log(scriptPath);
   conn.on('ready', () => {
     console.log('SSH Connection Established');
 
@@ -42,7 +43,7 @@ module.exports.triggerScript = (fname, status) => {
       }).on('data', (data) => {
         console.log(`STDOUT: ${data}`);
       }).stderr.on('data', (data) => {
-        // throw new Error(`STDERR: ${data}`);
+        console.error(`STDERR: ${data}`);
       });
     });
   });

@@ -2,7 +2,10 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const unzipper = require('unzipper');
+const AdmZip = require("adm-zip");
+const { exec } = require('child_process'); 
+
+
 const axios = require('axios');
 const { createScript, startScript, stopScript, deleteScript } = require('../Controllers/ScriptController');
 const FrontendModel = require('../Models/FrontendModel');
@@ -88,25 +91,17 @@ UploadRouter
 
       const zipFilePath = req.file.path;
 
-      fs.createReadStream(zipFilePath)
-        .pipe(unzipper.Parse())
-        .on('entry', (entry) => {
-          const fileName = entry.path;
-          const destinationPath = path.join(extractionDir, fileName);
+      // const zip = new AdmZip(zipFilePath);
+      // zip.extractAllTo(extractionDir);
 
-          if (entry.type === 'Directory') {
-            fs.mkdirSync(destinationPath, { recursive: true });
-          } else {
-            entry.pipe(fs.createWriteStream(destinationPath));
+
+
+      exec(`unzip ${zipFilePath} -d ${extractionDir}`);
+      fs.unlink(zipFilePath, (unlinkErr) => {
+          if (unlinkErr) {
+            console.error("Error deleting temporary file:", unlinkErr);
           }
-        })
-        .on('error', (error) => {
-          throw new Error('Error extracting zip file');
-        })
-        .on('finish', () => {
-          console.log('Zip file extracted successfully.');
         });
-
 
       //   Adding Scripts
 
@@ -125,7 +120,7 @@ UploadRouter
 
         let site=await FrontendModel.create(siteData);
         triggerScript(fname,20); 
-      
+
         res.json({
           message: "Site Deployed Successfully",
           status:true
