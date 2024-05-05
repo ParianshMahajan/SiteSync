@@ -11,9 +11,6 @@ const conn = new Client();
 
 module.exports.triggerScript = (fname, status) => {
   try {
-    
-    console.log("hi");
-  
     let sc = "";
     if (status === 20) {
       sc = "create.sh";
