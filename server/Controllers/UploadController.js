@@ -6,7 +6,6 @@ const AdmZip = require("adm-zip");
 const { exec } = require('child_process'); 
 
 
-const axios = require('axios');
 const { createScript, startScript, stopScript, deleteScript } = require('./ScriptController');
 const FrontendModel = require('../Models/FrontendModel');
 const { triggerScript } = require('../config/VM_Trigger');
@@ -14,11 +13,6 @@ const { createDns } = require('./CloudflareController');
 
 
 
-let url = `https://api.cloudflare.com/client/v4/zones/${process.env.zone_id}/dns_records`;
-let headers = {
-    'Authorization': `Bearer ${process.env.api_token}`,
-    'Content-Type': 'application/json'
-}
 
 const uploadDir = path.join(__dirname, '../uploads');
 
