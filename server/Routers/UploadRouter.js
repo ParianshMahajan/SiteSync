@@ -6,11 +6,6 @@ const AdmZip = require("adm-zip");
 const { exec } = require('child_process'); 
 
 
-const axios = require('axios');
-const { createScript, startScript, stopScript, deleteScript } = require('../Controllers/ScriptController');
-const FrontendModel = require('../Models/FrontendModel');
-const { triggerScript } = require('../config/VM_Trigger');
-const { createDns } = require('../Controllers/CloudflareController');
 const { UploadZip, ProcessZip } = require('../Controllers/UploadController');
 
 const app = express();

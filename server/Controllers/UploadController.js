@@ -70,8 +70,16 @@ module.exports.ProcessZip = async (req, res) => {
         fs.mkdirSync(extractionDir, { recursive: true });
 
         const zipFilePath = req.file.path;
-        const zip = new AdmZip(zipFilePath);
-        zip.extractAllTo(extractionDir);
+        // const zip = new AdmZip(zipFilePath);
+        // zip.extractAllTo(extractionDir);
+
+        exec(`unzip ${zipFilePath} -d ${extractionDir}`);
+        fs.unlink(zipFilePath, (unlinkErr) => {
+          if (unlinkErr) {
+            console.error("Error deleting temporary file:", unlinkErr);
+          }
+        });
+
 
 
         // Creating Scripts
