@@ -2,7 +2,6 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const AdmZip = require("adm-zip");
 const { exec } = require('child_process'); 
 
 
@@ -70,8 +69,6 @@ module.exports.ProcessZip = async (req, res) => {
         fs.mkdirSync(extractionDir, { recursive: true });
 
         const zipFilePath = req.file.path;
-        // const zip = new AdmZip(zipFilePath);
-        // zip.extractAllTo(extractionDir);
 
         
         exec(`unzip ${zipFilePath} -d ${extractionDir}`);
