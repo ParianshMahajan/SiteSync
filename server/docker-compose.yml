@@ -9,5 +9,5 @@ services:
     ports:
       - "2123:2123"
     volumes:
-      - "/home/Pariansh/frontend:/app/uploads"
+      - "/home/iete/pm/frontend:/app/uploads"
     restart: always
