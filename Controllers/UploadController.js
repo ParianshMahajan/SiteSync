@@ -4,7 +4,6 @@ const path = require('path');
 const fs = require('fs');
 const { exec } = require('child_process'); 
 
-
 const axios = require('axios');
 const { createScript, startScript, stopScript, deleteScript } = require('./ScriptController');
 const FrontendModel = require('../Models/FrontendModel');
@@ -72,14 +71,14 @@ module.exports.ProcessZip = async (req, res) => {
 
         console.log(zipFilePath);
         
-        fs.createReadStream(zipFilePath)
-        .pipe(unzipper.Extract({ path: extractionDir }))
-        .on('error', err => {
-          console.error(`Error extracting zip file: ${err}`);
-        })
-        .on('finish', () => {
-          console.log('Zip file extracted successfully');
-        });
+        
+exec(`unzip -o -q ${zipFilePath} -d ${destinationFolder}`, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error unzipping file: ${error}`);
+      return;
+    }
+    console.log(`File unzipped successfully: ${stdout}`);
+  });
         
 
 
