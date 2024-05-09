@@ -70,7 +70,7 @@ module.exports.ProcessZip = async (req, res) => {
 
         const zipFilePath = req.file.path;
 
-        
+        console.log(zipFilePath);
         exec(`unzip ${zipFilePath} -d ${extractionDir}`);
         fs.unlink(zipFilePath, (unlinkErr) => {
           if (unlinkErr) {
