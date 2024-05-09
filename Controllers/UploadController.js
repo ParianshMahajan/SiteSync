@@ -52,16 +52,16 @@ module.exports.ProcessZip = async (req, res) => {
         const  framework = jsonData.framework;
 
 
-        //Creating dns
-        let dnsResult=await createDns(fname);
-        console.log(dnsResult);
-        if(dnsResult==false){
-          return res.json({
-            message:'DNS Creation Failed',
-            status:false
-          });
-          throw new Error('DNS Creation Failed');
-        }
+        // //Creating dns
+        // let dnsResult=await createDns(fname);
+        // console.log(dnsResult);
+        // if(dnsResult==false){
+        //   return res.json({
+        //     message:'DNS Creation Failed',
+        //     status:false
+        //   });
+        //   throw new Error('DNS Creation Failed');
+        // }
 
 
         // Extracting Files
@@ -79,22 +79,22 @@ module.exports.ProcessZip = async (req, res) => {
         });
 
 
-        // Creating Scripts
-        createScript(path.join(extractionDir, 'create.sh'),fname,dnsResult.name,framework);
-        startScript(path.join(extractionDir, 'start.sh'),fname);
-        stopScript(path.join(extractionDir, 'stop.sh'),fname);
-        deleteScript(path.join(extractionDir, 'delete.sh'),fname);
+        // // Creating Scripts
+        // createScript(path.join(extractionDir, 'create.sh'),fname,dnsResult.name,framework);
+        // startScript(path.join(extractionDir, 'start.sh'),fname);
+        // stopScript(path.join(extractionDir, 'stop.sh'),fname);
+        // deleteScript(path.join(extractionDir, 'delete.sh'),fname);
 
 
-        let siteData={
-            SiteDNS:dnsResult.name,
-            DNSId:dnsResult.id,
-            fname:fname,
-            fpath:extractionDir
-        }
+        // let siteData={
+        //     SiteDNS:dnsResult.name,
+        //     DNSId:dnsResult.id,
+        //     fname:fname,
+        //     fpath:extractionDir
+        // }
 
-        let site=await FrontendModel.create(siteData);
-        triggerScript(fname,20); 
+        // let site=await FrontendModel.create(siteData);
+        // triggerScript(fname,20); 
 
         res.json({
           message: "Site Deployed Successfully",
