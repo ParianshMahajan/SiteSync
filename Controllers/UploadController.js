@@ -82,10 +82,15 @@ module.exports.ProcessZip = async (req, res) => {
         res.status(500).json({ error: 'Failed to decompress zip file' });
       })
       .pipe(fs.createWriteStream(extractionDir))
+      .on('error', (err) => {
+        console.error('Error writing extracted files:', err);
+        res.status(500).json({ error: 'Failed to write extracted files' });
+      })
       .on('finish', () => {
         console.log('Zip file decompressed successfully');
         res.status(200).json({ message: 'Zip file decompressed successfully' });
       });
+
 
 
 
