@@ -69,35 +69,31 @@ module.exports.ProcessZip = async (req, res) => {
 
     console.log(zipFilePath);
 
-    await decompress(zipFilePath, extractionDir)
-        .then(files => {
-            console.log('done!');
-        })
-        .catch((error) => {
-            console.log(error);
-        });
+    await decompress(zipFilePath, extractionDir);
+
     // // Creating Scripts
     // createScript(path.join(extractionDir, 'create.sh'),fname,dnsResult.name,framework);
     // startScript(path.join(extractionDir, 'start.sh'),fname);
     // stopScript(path.join(extractionDir, 'stop.sh'),fname);
     // deleteScript(path.join(extractionDir, 'delete.sh'),fname);
-    
+
     // let siteData={
-        //     SiteDNS:dnsResult.name,
-        //     DNSId:dnsResult.id,
-        //     fname:fname,
-        //     fpath:extractionDir
-        // }
-        
-        // let site=await FrontendModel.create(siteData);
-        // triggerScript(fname,20);
-        res.json({
-          message: "File Uploaded Successfully",
-          status: true,
-        })
-    } catch (error) {
-        res.status(500).json({
-            message: error.message,
+    //     SiteDNS:dnsResult.name,
+    //     DNSId:dnsResult.id,
+    //     fname:fname,
+    //     fpath:extractionDir
+    // }
+
+    // let site=await FrontendModel.create(siteData);
+    // triggerScript(fname,20);
+
+    res.json({
+      message: "File Uploaded Successfully",
+      status: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
     });
   }
 };
