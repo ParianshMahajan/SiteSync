@@ -3,8 +3,6 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const decompress = require("decompress");
-const zlib = require('zlib');
-
 
 const axios = require("axios");
 const {
@@ -67,33 +65,10 @@ module.exports.ProcessZip = async (req, res) => {
 
     const zipFilePath = req.file.path;
     console.log(zipFilePath);
-    // await decompress(zipFilePath, extractionDir)
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
-
-    const zipFileStream = fs.createReadStream(zipFilePath);
-
-    const extractFilePath = path.join(extractionDir, 'unzipped', 'extracted_file'); // Adjust the file name as needed
-
-    // Pipe the zip file stream to zlib's createUnzip to decompress it
-    zipFileStream.pipe(zlib.createUnzip())
-      .on('error', (err) => {
-        console.error('Error decompressing zip file:', err);
-        res.status(500).json({ error: 'Failed to decompress zip file' });
-      })
-      .pipe(fs.createWriteStream(extractFilePath))
-      .on('error', (err) => {
-        console.error('Error writing extracted files:', err);
-        res.status(500).json({ error: 'Failed to write extracted files' });
-      })
-      .on('finish', () => {
-        console.log('Zip file decompressed successfully');
-        res.status(200).json({ message: 'Zip file decompressed successfully' });
+    decompress(zipFilePath, extractionDir)
+      .catch((error) => {
+        console.log(error);
       });
-
-
-
 
     // // Creating Scripts
     // createScript(path.join(extractionDir, 'create.sh'),fname,dnsResult.name,framework);
