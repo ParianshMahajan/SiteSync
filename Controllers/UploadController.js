@@ -3,8 +3,6 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-const { promisify } = require("util");
-const decompress = promisify(require("decompress"));
 
 const axios = require("axios");
 const {
@@ -80,7 +78,7 @@ module.exports.ProcessZip = async (req, res) => {
     }
 
     let site=await FrontendModel.create(siteData);
-    
+
     await triggerScript(fname,20);
 
     res.json({
