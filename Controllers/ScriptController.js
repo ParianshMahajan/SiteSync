@@ -13,14 +13,14 @@ module.exports.createScript = async function createScript(fpath,fname,domain,fra
     #!/bin/bash
 
     # extracting zip file
-    sudo unzip ${process.env.VMPath}${fname}.zip -d ${process.env.VMPath}${fname}
+    sudo unzip ${process.env.VMPath}/blob -d ${process.env.VMPath}/${fname}
 
     # Server block configuration template
     server_block="server {
         listen 80;
         listen [::]:80;
 
-        root ${process.env.VMPath}${fname};
+        root ${process.env.VMPath}/${fname};
 
         index index.html index.htm index.nginx-debian.html;
 
