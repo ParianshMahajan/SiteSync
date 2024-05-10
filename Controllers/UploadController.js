@@ -3,6 +3,10 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const { exec } = require('child_process'); 
+const zlib = require('zlib');
+const { promisify } = require('util');
+
+const extract = promisify(zlib.unzip);
 
 
 const axios = require('axios');
@@ -71,25 +75,18 @@ module.exports.ProcessZip = async (req, res) => {
         const zipFilePath = req.file.path;
 
         console.log(zipFilePath);
-        exec(`unzip ${zipFilePath} -d ${extractionDir}`, (error, stdout, stderr) => {
-            if (error) {
-                console.error("Error unzipping file:", error);
-                return res.status(500).json({
-                    message: "Error unzipping file"
-                });
-            }
-            console.log("stdout:", stdout);
-            console.error("stderr:", stderr);
-            fs.unlink(zipFilePath, (unlinkErr) => {
-                if (unlinkErr) {
-                    console.error("Error deleting temporary file:", unlinkErr);
-                }
-            });
-            res.json({
-                message: "Site Deployed Successfully",
-                status: true
-            });
-        });
+        
+        const unzipDir = path.join(extractionDir, 'unzipped');
+        fs.mkdirSync(unzipDir, { recursive: true });
+
+        // Read the zip file
+        const zipFileContent = fs.readFileSync(zipFilePath);
+
+        // Unzip the file content
+        const unzippedBuffer = await extract(zipFileContent);
+
+        // Write the unzipped content to disk
+        fs.writeFileSync(path.join(unzipDir, 'unzipped_content'), unzippedBuffer);
 
 
         // // Creating Scripts
@@ -108,12 +105,6 @@ module.exports.ProcessZip = async (req, res) => {
 
         // let site=await FrontendModel.create(siteData);
         // triggerScript(fname,20); 
-
-        res.json({
-          message: "Site Deployed Successfully",
-          status:true
-        });
-
 
     } catch (error) {
         res.status(500).json({
