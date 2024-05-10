@@ -39,15 +39,6 @@ const upload = multer({
 
 
 
-
-let url = `https://api.cloudflare.com/client/v4/zones/${process.env.zone_id}/dns_records`;
-let headers = {
-    'Authorization': `Bearer ${process.env.api_token}`,
-    'Content-Type': 'application/json'
-}
-
-
-
 UploadRouter
 .route('/')
 .post(upload.single('file'),UploadZip,ProcessZip);
