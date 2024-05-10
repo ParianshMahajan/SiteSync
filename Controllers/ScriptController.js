@@ -12,12 +12,15 @@ module.exports.createScript = async function createScript(fpath,fname,domain,fra
     let content = `
     #!/bin/bash
 
+    # extracting zip file
+    sudo unzip ${process.env.VMPath}${fname}.zip -d ${process.env.VMPath}${fname}
+
     # Server block configuration template
     server_block="server {
         listen 80;
         listen [::]:80;
 
-        root /home/Pariansh/frontend/${fname};
+        root ${process.env.VMPath}${fname};
 
         index index.html index.htm index.nginx-debian.html;
 

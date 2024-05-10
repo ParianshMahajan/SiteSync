@@ -9,7 +9,7 @@ const connSettings = {
 
 const conn = new Client();
 
-module.exports.triggerScript = (fname, status) => {
+module.exports.triggerScript = async (fname, status) => {
   try {
     let sc = "";
     if (status === 20) {

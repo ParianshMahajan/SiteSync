@@ -1,21 +1,32 @@
-const { exec } = require('child_process');
+const fs = require('fs');
+const path = require('path');
+const StreamZip = require('node-stream-zip');
 
 module.exports.extractZip = function extractZip(zipFilePath, extractionDir) {
     return new Promise((resolve, reject) => {
-        const command = `unzip -o ${zipFilePath} -d ${extractionDir}`;
-        exec(command, (error, stdout, stderr) => {
-            if (error) {
-                console.error(`Extraction error: ${error.message}`);
-                reject(error);
-                return;
-            }
-            if (stderr) {
-                console.error(`Extraction stderr: ${stderr}`);
-                reject(new Error(stderr));
-                return;
-            }
-            console.log('Extraction complete');
-            resolve();
+        const zip = new StreamZip({
+            file: zipFilePath,
+            storeEntries: true // Ensures that the zip entries are stored in memory for easy access
+        });
+
+        zip.on('error', err => {
+            console.error('Extraction error:', err);
+            reject(err);
+        });
+
+        zip.on('ready', () => {
+            // Extract all entries to the specified directory
+            zip.extract(null, extractionDir, err => {
+                if (err) {
+                    console.error('Extraction error:', err);
+                    reject(err);
+                } else {
+                    console.log('Extraction complete');
+                    resolve();
+                }
+                // Close the zip file
+                zip.close();
+            });
         });
     });
 };

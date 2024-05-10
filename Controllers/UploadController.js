@@ -51,46 +51,37 @@ module.exports.ProcessZip = async (req, res) => {
     const fname = jsonData.fname;
     const framework = jsonData.framework;
 
-    // //Creating dns
-    // let dnsResult=await createDns(fname);
-    // console.log(dnsResult);
-    // if(dnsResult==false){
-    //   return res.json({
-    //     message:'DNS Creation Failed',
-    //     status:false
-    //   });
-    //   throw new Error('DNS Creation Failed');
-    // }
+    //Creating dns
+    let dnsResult=await createDns(fname);
+    console.log(dnsResult);
+    if(dnsResult==false){
+      return res.json({
+        message:'DNS Creation Failed',
+        status:false
+      });
+      throw new Error('DNS Creation Failed');
+    }
 
     // Extracting Files
     const extractionDir = path.join(uploadDir, fname);
     fs.mkdirSync(extractionDir, { recursive: true });
 
-    const zipFilePath = req.file.path;
+    // Creating Scripts
+    createScript(path.join(extractionDir, 'create.sh'),fname,dnsResult.name,framework);
+    startScript(path.join(extractionDir, 'start.sh'),fname);
+    stopScript(path.join(extractionDir, 'stop.sh'),fname);
+    deleteScript(path.join(extractionDir, 'delete.sh'),fname);
 
-    console.log(zipFilePath);
+    let siteData={
+        SiteDNS:dnsResult.name,
+        DNSId:dnsResult.id,
+        fname:fname,
+        fpath:extractionDir
+    }
 
-    // await decompress(zipFilePath, extractionDir);
-    extractZip(zipFilePath, extractionDir)
-    .then(() => console.log('Extraction success'))
-    .catch(err => console.error('Extraction error:', err));
-
-
-    // // Creating Scripts
-    // createScript(path.join(extractionDir, 'create.sh'),fname,dnsResult.name,framework);
-    // startScript(path.join(extractionDir, 'start.sh'),fname);
-    // stopScript(path.join(extractionDir, 'stop.sh'),fname);
-    // deleteScript(path.join(extractionDir, 'delete.sh'),fname);
-
-    // let siteData={
-    //     SiteDNS:dnsResult.name,
-    //     DNSId:dnsResult.id,
-    //     fname:fname,
-    //     fpath:extractionDir
-    // }
-
-    // let site=await FrontendModel.create(siteData);
-    // triggerScript(fname,20);
+    let site=await FrontendModel.create(siteData);
+    
+    await triggerScript(fname,20);
 
     res.json({
       message: "File Uploaded Successfully",
