@@ -3,7 +3,8 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-const decompress = require("decompress");
+const { promisify } = require("util");
+const decompress = promisify(require("decompress"));
 
 const axios = require("axios");
 const {
@@ -68,7 +69,7 @@ module.exports.ProcessZip = async (req, res) => {
 
     console.log(zipFilePath);
 
-    decompress(zipFilePath, extractionDir)
+    await decompress(zipFilePath, extractionDir)
       .then(
         res.json({
           message: "File Uploaded Successfully",
