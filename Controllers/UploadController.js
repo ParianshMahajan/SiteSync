@@ -1,123 +1,103 @@
-const express = require('express');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
-const { exec } = require('child_process'); 
-const zlib = require('zlib');
-const { promisify } = require('util');
+const express = require("express");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
+const { exec } = require("child_process");
+const zlib = require("zlib");
+const { promisify } = require("util");
 
 const extract = promisify(zlib.unzip);
 
-
-const axios = require('axios');
-const { createScript, startScript, stopScript, deleteScript } = require('./ScriptController');
-const FrontendModel = require('../Models/FrontendModel');
-const { triggerScript } = require('../config/VM_Trigger');
-const { createDns } = require('./CloudflareController');
-
-
+const axios = require("axios");
+const {
+  createScript,
+  startScript,
+  stopScript,
+  deleteScript,
+} = require("./ScriptController");
+const FrontendModel = require("../Models/FrontendModel");
+const { triggerScript } = require("../config/VM_Trigger");
+const { createDns } = require("./CloudflareController");
 
 let url = `https://api.cloudflare.com/client/v4/zones/${process.env.zone_id}/dns_records`;
 let headers = {
-    'Authorization': `Bearer ${process.env.api_token}`,
-    'Content-Type': 'application/json'
-}
+  Authorization: `Bearer ${process.env.api_token}`,
+  "Content-Type": "application/json",
+};
 
-const uploadDir = path.join(__dirname, '../uploads');
+const uploadDir = path.join(__dirname, "../uploads");
 
 module.exports.UploadZip = async (req, res, next) => {
-    try {
-        if (!req.file) {
-        
-            return res.json({
-              message:'No file was uploaded.',
-              status:false
-            });
-            
-            throw new Error('No file Uploaded');
-            
-        }
-        else{
-            next();
-        }
-    
-    } catch (error) {
-        res.status(500).json({
-            message:error.message
-        })
-    }
+  try {
+    if (!req.file) {
+      return res.json({
+        message: "No file was uploaded.",
+        status: false,
+      });
 
-}
+      throw new Error("No file Uploaded");
+    } else {
+      next();
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
 
 module.exports.ProcessZip = async (req, res) => {
-    try {
-        const jsonData = JSON.parse(req.body.data);
-        const  fname = jsonData.fname;
-        const  framework = jsonData.framework;
+  try {
+    const jsonData = JSON.parse(req.body.data);
+    const fname = jsonData.fname;
+    const framework = jsonData.framework;
 
+    // //Creating dns
+    // let dnsResult=await createDns(fname);
+    // console.log(dnsResult);
+    // if(dnsResult==false){
+    //   return res.json({
+    //     message:'DNS Creation Failed',
+    //     status:false
+    //   });
+    //   throw new Error('DNS Creation Failed');
+    // }
 
-        // //Creating dns
-        // let dnsResult=await createDns(fname);
-        // console.log(dnsResult);
-        // if(dnsResult==false){
-        //   return res.json({
-        //     message:'DNS Creation Failed',
-        //     status:false
-        //   });
-        //   throw new Error('DNS Creation Failed');
-        // }
+    // Extracting Files
+    const extractionDir = path.join(uploadDir, fname);
+    fs.mkdirSync(extractionDir, { recursive: true });
 
+    const zipFilePath = req.file.path;
+    console.log(zipFilePath);
+    const zipFileContent = fs.readFileSync(zipFilePath);
+    console.log("Zip file content:", zipFileContent.toString());
 
-        // Extracting Files
-        const extractionDir = path.join(uploadDir, fname);
-        fs.mkdirSync(extractionDir, { recursive: true });
+    const unzippedBuffer = await extract(zipFileContent);
+    fs.writeFileSync(extractionDir, unzippedBuffer);
 
-        const zipFilePath = req.file.path;
+    // // Creating Scripts
+    // createScript(path.join(extractionDir, 'create.sh'),fname,dnsResult.name,framework);
+    // startScript(path.join(extractionDir, 'start.sh'),fname);
+    // stopScript(path.join(extractionDir, 'stop.sh'),fname);
+    // deleteScript(path.join(extractionDir, 'delete.sh'),fname);
 
-        console.log(zipFilePath);
-        
-        const unzipDir = path.join(extractionDir, 'unzipped');
-        fs.mkdirSync(unzipDir, { recursive: true });
+    // let siteData={
+    //     SiteDNS:dnsResult.name,
+    //     DNSId:dnsResult.id,
+    //     fname:fname,
+    //     fpath:extractionDir
+    // }
 
-        // Read the zip file
-        const zipFileContent = fs.readFileSync(zipFilePath);
+    // let site=await FrontendModel.create(siteData);
+    // triggerScript(fname,20);
 
-        // Unzip the file content
-        const unzippedBuffer = await extract(zipFileContent);
-
-        // Write the unzipped content to disk
-        fs.writeFileSync(path.join(unzipDir, 'unzipped_content'), unzippedBuffer);
-
-
-        // // Creating Scripts
-        // createScript(path.join(extractionDir, 'create.sh'),fname,dnsResult.name,framework);
-        // startScript(path.join(extractionDir, 'start.sh'),fname);
-        // stopScript(path.join(extractionDir, 'stop.sh'),fname);
-        // deleteScript(path.join(extractionDir, 'delete.sh'),fname);
-
-
-        // let siteData={
-        //     SiteDNS:dnsResult.name,
-        //     DNSId:dnsResult.id,
-        //     fname:fname,
-        //     fpath:extractionDir
-        // }
-
-        // let site=await FrontendModel.create(siteData);
-        // triggerScript(fname,20); 
-
-        res.json({
-            message:'File Uploaded Successfully',
-            status:true
-        });
-
-
-    } catch (error) {
-        res.status(500).json({
-            message:error.message
-        })
-    }
-
-}
-
-
+    res.json({
+      message: "File Uploaded Successfully",
+      status: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
