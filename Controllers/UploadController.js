@@ -2,11 +2,7 @@ const express = require("express");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
-const { exec } = require("child_process");
-const zlib = require("zlib");
-const { promisify } = require("util");
-
-const extract = promisify(zlib.unzip);
+const decompress = require("decompress");
 
 const axios = require("axios");
 const {
@@ -69,11 +65,10 @@ module.exports.ProcessZip = async (req, res) => {
 
     const zipFilePath = req.file.path;
     console.log(zipFilePath);
-    const zipFileContent = fs.readFileSync(zipFilePath);
-
-    const unzippedBuffer = await extract(zipFileContent);
-    console.log(unzippedBuffer);
-    fs.writeFileSync(extractionDir, unzippedBuffer);
+    decompress(zipFilePath, extractionDir)
+      .catch((error) => {
+        console.log(error);
+      });
 
     // // Creating Scripts
     // createScript(path.join(extractionDir, 'create.sh'),fname,dnsResult.name,framework);
