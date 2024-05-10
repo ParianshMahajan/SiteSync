@@ -57,10 +57,6 @@ module.exports.createScript = async function createScript(fpath,fname,domain,fra
     else
         echo "Error reloading Nginx."
     fi
-
-
-    # extracting zip file
-    sudo unzip ${process.env.VMPath}/blob -d ${process.env.VMPath}/${fname}
     `;
 
     fs.writeFileSync(fpath, content);

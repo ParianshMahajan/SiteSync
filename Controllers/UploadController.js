@@ -3,6 +3,8 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
+const decompress = ("decompress");
+
 const axios = require("axios");
 const {
   createScript,
@@ -13,7 +15,6 @@ const {
 const FrontendModel = require("../Models/FrontendModel");
 const { triggerScript } = require("../config/VM_Trigger");
 const { createDns } = require("./CloudflareController");
-const { extractZip } = require("../Middlewares/Unzipper");
 
 let url = `https://api.cloudflare.com/client/v4/zones/${process.env.zone_id}/dns_records`;
 let headers = {
@@ -49,54 +50,53 @@ module.exports.ProcessZip = async (req, res) => {
     const framework = jsonData.framework;
 
     //Creating dns
-    let dnsResult = await createDns(fname);
+    let dnsResult=await createDns(fname);
     console.log(dnsResult);
-    if (dnsResult == false) {
+    if(dnsResult==false){
       return res.json({
-        message: "DNS Creation Failed",
-        status: false,
+        message:'DNS Creation Failed',
+        status:false
       });
-      throw new Error("DNS Creation Failed");
+      throw new Error('DNS Creation Failed');
     }
 
     // Extracting Files
+
+
     const extractionDir = path.join(uploadDir, fname);
     fs.mkdirSync(extractionDir, { recursive: true });
 
+    const zipFilePath = req.file.path;
+
+    console.log(zipFilePath);
+
+    decompress(zipFilePath, extractionDir)
+
+
+
     // Creating Scripts
-    createScript(
-      path.join(extractionDir, "create.sh"),
-      fname,
-      dnsResult.name,
-      framework
-    );
-    startScript(path.join(extractionDir, "start.sh"), fname);
-    stopScript(path.join(extractionDir, "stop.sh"), fname);
-    deleteScript(path.join(extractionDir, "delete.sh"), fname);
+    createScript(path.join(extractionDir, 'create.sh'),fname,dnsResult.name,framework);
+    startScript(path.join(extractionDir, 'start.sh'),fname);
+    stopScript(path.join(extractionDir, 'stop.sh'),fname);
+    deleteScript(path.join(extractionDir, 'delete.sh'),fname);
+    
+    let siteData={
+        SiteDNS:dnsResult.name,
+        DNSId:dnsResult.id,
+        fname:fname,
+        fpath:extractionDir
+    }
+    
+    let site=await FrontendModel.create(siteData);
+    triggerScript(fname,20);
+    res.json({
+      message: "File Uploaded Successfully",
+      status: true,
+    })
 
-    let siteData = {
-      SiteDNS: dnsResult.name,
-      DNSId: dnsResult.id,
-      fname: fname,
-      fpath: extractionDir,
-    };
-
-    let site = await FrontendModel.create(siteData);
-
-    triggerScript(fname, 20)
-      .then((result) => {
-          res.json({
-            message: "File Uploaded Successfully",
-            status: true,
-          });
-      })
-      .catch((error) => {
-        console.error(error);
-        // Handle error
-      });
-  } catch (error) {
-    res.status(500).json({
-      message: error.message,
+    } catch (error) {
+        res.status(500).json({
+            message: error.message,
     });
   }
 };
