@@ -2,7 +2,7 @@ const express = require("express");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
-const decompress = require("decompress");
+const admZip = require("adm-zip");
 
 const axios = require("axios");
 const {
@@ -67,16 +67,9 @@ module.exports.ProcessZip = async (req, res) => {
     console.log(zipFilePath);
 
 
-    const unzip = async ()=>{
-        await decompress(zipFilePath, extractionDir)
-        .then((files) => {
-            console.log("Files extracted");
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-    }
-    await unzip();
+    const zip = new admZip(zipFilePath);
+    zip.extractAllTo(extractionDir, true );
+
     // // Creating Scripts
     // createScript(path.join(extractionDir, 'create.sh'),fname,dnsResult.name,framework);
     // startScript(path.join(extractionDir, 'start.sh'),fname);
