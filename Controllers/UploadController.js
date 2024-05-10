@@ -68,7 +68,7 @@ module.exports.ProcessZip = async (req, res) => {
 
 
     const unzip = async ()=>{
-        decompress(zipFilePath, extractionDir)
+        await decompress(zipFilePath, extractionDir)
         .then((files) => {
             console.log("Files extracted");
         })
