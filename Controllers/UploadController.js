@@ -65,14 +65,18 @@ module.exports.ProcessZip = async (req, res) => {
 
     const zipFilePath = req.file.path;
     console.log(zipFilePath);
-    decompress(zipFilePath, extractionDir)
-      .then((files) => {
-        console.log("Files extracted");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
 
+
+    const unzip = async ()=>{
+        decompress(zipFilePath, extractionDir)
+        .then((files) => {
+            console.log("Files extracted");
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    }
+    await unzip();
     // // Creating Scripts
     // createScript(path.join(extractionDir, 'create.sh'),fname,dnsResult.name,framework);
     // startScript(path.join(extractionDir, 'start.sh'),fname);
