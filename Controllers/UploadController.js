@@ -106,6 +106,12 @@ module.exports.ProcessZip = async (req, res) => {
         // let site=await FrontendModel.create(siteData);
         // triggerScript(fname,20); 
 
+        res.json({
+            message:'File Uploaded Successfully',
+            status:true
+        });
+
+
     } catch (error) {
         res.status(500).json({
             message:error.message
