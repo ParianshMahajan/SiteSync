@@ -25,9 +25,15 @@ const storage = multer.diskStorage({
     cb(null, uploadDir); 
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname);
+    const ext = path.extname(file.originalname);
+    if (ext.toLowerCase() === '.zip') {
+      cb(null, file.originalname); 
+    } else {
+      cb(null, file.originalname + '.zip'); 
+    }
   }
 });
+
 
 const upload = multer({
   storage: storage,

@@ -16,6 +16,7 @@ const {
 const FrontendModel = require("../Models/FrontendModel");
 const { triggerScript } = require("../config/VM_Trigger");
 const { createDns } = require("./CloudflareController");
+const { extractZip } = require("../Middlewares/Unzipper");
 
 let url = `https://api.cloudflare.com/client/v4/zones/${process.env.zone_id}/dns_records`;
 let headers = {
@@ -69,7 +70,11 @@ module.exports.ProcessZip = async (req, res) => {
 
     console.log(zipFilePath);
 
-    await decompress(zipFilePath, extractionDir);
+    // await decompress(zipFilePath, extractionDir);
+    extractZip(zipFilePath, extractionDir)
+    .then(() => console.log('Extraction success'))
+    .catch(err => console.error('Extraction error:', err));
+
 
     // // Creating Scripts
     // createScript(path.join(extractionDir, 'create.sh'),fname,dnsResult.name,framework);
