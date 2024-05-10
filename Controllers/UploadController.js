@@ -5,8 +5,6 @@ const fs = require("fs");
 
 const decompress = require("decompress");
 
-
-
 const axios = require("axios");
 const {
   createScript,
@@ -70,15 +68,17 @@ module.exports.ProcessZip = async (req, res) => {
 
     console.log(zipFilePath);
 
-    
     decompress(zipFilePath, extractionDir)
-  .then((files) => {
-    console.log(files);
-  })
-  .catch((error) => {
-    console.log(error);
-  });
-      // // Creating Scripts
+      .then(
+        res.json({
+          message: "File Uploaded Successfully",
+          status: true,
+        })
+      )
+      .catch((error) => {
+        console.log(error);
+      });
+    // // Creating Scripts
     // createScript(path.join(extractionDir, 'create.sh'),fname,dnsResult.name,framework);
     // startScript(path.join(extractionDir, 'start.sh'),fname);
     // stopScript(path.join(extractionDir, 'stop.sh'),fname);
@@ -93,11 +93,6 @@ module.exports.ProcessZip = async (req, res) => {
 
     // let site=await FrontendModel.create(siteData);
     // triggerScript(fname,20);
-
-    res.json({
-      message: "File Uploaded Successfully",
-      status: true,
-    });
   } catch (error) {
     res.status(500).json({
       message: error.message,
