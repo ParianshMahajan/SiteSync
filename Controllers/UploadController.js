@@ -3,7 +3,7 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-const unzipper = require("unzipper");
+const decompress = require("decompress");
 
 
 
@@ -71,11 +71,13 @@ module.exports.ProcessZip = async (req, res) => {
     console.log(zipFilePath);
 
     
-    fs.createReadStream(zipFilePath)
-    .pipe(unzipper.Extract({ path: extractionDir }))
-    .on("error", (err) => {
-      throw err;
-    })
+    decompress(zipFilePath, extractionDir)
+  .then((files) => {
+    console.log(files);
+  })
+  .catch((error) => {
+    console.log(error);
+  });
       // // Creating Scripts
     // createScript(path.join(extractionDir, 'create.sh'),fname,dnsResult.name,framework);
     // startScript(path.join(extractionDir, 'start.sh'),fname);
