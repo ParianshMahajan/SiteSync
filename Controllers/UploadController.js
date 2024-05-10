@@ -3,7 +3,6 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-
 const axios = require("axios");
 const {
   createScript,
@@ -50,14 +49,14 @@ module.exports.ProcessZip = async (req, res) => {
     const framework = jsonData.framework;
 
     //Creating dns
-    let dnsResult=await createDns(fname);
+    let dnsResult = await createDns(fname);
     console.log(dnsResult);
-    if(dnsResult==false){
+    if (dnsResult == false) {
       return res.json({
-        message:'DNS Creation Failed',
-        status:false
+        message: "DNS Creation Failed",
+        status: false,
       });
-      throw new Error('DNS Creation Failed');
+      throw new Error("DNS Creation Failed");
     }
 
     // Extracting Files
@@ -65,26 +64,36 @@ module.exports.ProcessZip = async (req, res) => {
     fs.mkdirSync(extractionDir, { recursive: true });
 
     // Creating Scripts
-    createScript(path.join(extractionDir, 'create.sh'),fname,dnsResult.name,framework);
-    startScript(path.join(extractionDir, 'start.sh'),fname);
-    stopScript(path.join(extractionDir, 'stop.sh'),fname);
-    deleteScript(path.join(extractionDir, 'delete.sh'),fname);
+    createScript(
+      path.join(extractionDir, "create.sh"),
+      fname,
+      dnsResult.name,
+      framework
+    );
+    startScript(path.join(extractionDir, "start.sh"), fname);
+    stopScript(path.join(extractionDir, "stop.sh"), fname);
+    deleteScript(path.join(extractionDir, "delete.sh"), fname);
 
-    let siteData={
-        SiteDNS:dnsResult.name,
-        DNSId:dnsResult.id,
-        fname:fname,
-        fpath:extractionDir
-    }
+    let siteData = {
+      SiteDNS: dnsResult.name,
+      DNSId: dnsResult.id,
+      fname: fname,
+      fpath: extractionDir,
+    };
 
-    let site=await FrontendModel.create(siteData);
+    let site = await FrontendModel.create(siteData);
 
-    await triggerScript(fname,20);
-
-    res.json({
-      message: "File Uploaded Successfully",
-      status: true,
-    });
+    triggerScript(fname, 20)
+      .then((result) => {
+          res.json({
+            message: "File Uploaded Successfully",
+            status: true,
+          });
+      })
+      .catch((error) => {
+        console.error(error);
+        // Handle error
+      });
   } catch (error) {
     res.status(500).json({
       message: error.message,
