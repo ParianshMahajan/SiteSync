@@ -14,4 +14,4 @@ RUN npm install
 
 COPY . /app
 
-ENTRYPOINT [ "nodemon", "app.js" ]
+ENTRYPOINT [ "node", "app.js" ]
