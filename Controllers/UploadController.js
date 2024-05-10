@@ -70,9 +70,9 @@ module.exports.ProcessZip = async (req, res) => {
     const zipFilePath = req.file.path;
     console.log(zipFilePath);
     const zipFileContent = fs.readFileSync(zipFilePath);
-    console.log("Zip file content:", zipFileContent.toString());
 
     const unzippedBuffer = await extract(zipFileContent);
+    console.log(unzippedBuffer);
     fs.writeFileSync(extractionDir, unzippedBuffer);
 
     // // Creating Scripts
