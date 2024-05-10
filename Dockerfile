@@ -5,6 +5,10 @@ RUN apt-get update && \
     apt-get install -y nodejs npm && \
     npm install -g nodemon@latest
 
+
+# Install unzip
+RUN apt-get install -y unzip
+
 # Set working directory
 WORKDIR /app
 
