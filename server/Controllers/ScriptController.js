@@ -17,11 +17,11 @@ module.exports.createScript = async function createScript(fpath,fname,domain,fra
         listen 80;
         listen [::]:80;
 
-        root /home/Pariansh/frontend/${fname};
+        server_name ${domain};
 
+        root ${process.env.VMPath}/${fname};
         index index.html index.htm index.nginx-debian.html;
 
-        server_name ${domain};
 
         location / {
             try_files ${redirects};

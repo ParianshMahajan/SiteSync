@@ -1,13 +1,17 @@
-FROM node
+FROM ubuntu:latest
 
+RUN apt-get update && \
+    apt-get install -y nodejs npm && \
+    npm install -g nodemon@latest
+
+RUN apt-get install -y unzip
+    
 WORKDIR /app
 
 COPY package.json .
 
-
-RUN npm install -g nodemon
 RUN npm install
 
 COPY . /app
 
-ENTRYPOINT [ "nodemon", "app.js" ]
+ENTRYPOINT [ "node", "app.js" ]

@@ -2,10 +2,14 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const AdmZip = require("adm-zip");
 const { exec } = require('child_process'); 
 
 
+const axios = require('axios');
+const { createScript, startScript, stopScript, deleteScript } = require('../Controllers/ScriptController');
+const FrontendModel = require('../Models/FrontendModel');
+const { triggerScript } = require('../config/VM_Trigger');
+const { createDns } = require('../Controllers/CloudflareController');
 const { UploadZip, ProcessZip } = require('../Controllers/UploadController');
 
 const app = express();
@@ -21,9 +25,15 @@ const storage = multer.diskStorage({
     cb(null, uploadDir); 
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname);
+    const ext = path.extname(file.originalname);
+    if (ext.toLowerCase() === '.zip') {
+      cb(null, file.originalname); 
+    } else {
+      cb(null, file.originalname + '.zip'); 
+    }
   }
 });
+
 
 const upload = multer({
   storage: storage,
@@ -31,8 +41,6 @@ const upload = multer({
     fileSize: 100 * 1024 * 1024,
   }
 });
-
-
 
 
 
