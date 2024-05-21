@@ -21,6 +21,8 @@ module.exports.triggerScript = async (fname, status) => {
         sc = "start.sh";
       } else if (status === -1) {
         sc = "delete.sh";
+      } else if (status === 40) {
+        sc = "update.sh";
       } else {
         reject(new Error("Invalid status code"));
         return;

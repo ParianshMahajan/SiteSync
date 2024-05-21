@@ -11,6 +11,7 @@ const {
   startScript,
   stopScript,
   deleteScript,
+  updateScript,
 } = require("./ScriptController");
 const FrontendModel = require("../Models/FrontendModel");
 const { triggerScript } = require("../config/VM_Trigger");
@@ -84,6 +85,7 @@ module.exports.ProcessZip = async (req, res) => {
         SiteDNS:dnsResult.name,
         DNSId:dnsResult.id,
         fname:fname,
+        framework:framework,
         fpath:extractionDir
     }
     
@@ -91,6 +93,49 @@ module.exports.ProcessZip = async (req, res) => {
     triggerScript(fname,20);
     res.json({
       message: "File Uploaded Successfully",
+      status: true,
+    })
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message,
+    });
+  }
+};
+
+
+
+module.exports.ReplaceZip = async (req, res) => {
+  try {
+    const site = await FrontendModel.findOne(req.body.id);
+    const fname = site.fname;
+    const framework = site.framework;
+
+
+    
+    
+    // Extracting Files
+    const extractionDir = path.join(uploadDir, fname);
+    fs.rmdirSync(extractionDir, { recursive: true });
+    fs.mkdirSync(extractionDir, { recursive: true });
+
+    const zipFilePath = req.file.path;
+
+    decompress(zipFilePath, extractionDir)
+
+
+
+    createScript(path.join(extractionDir, 'create.sh'),fname,dnsResult.name,framework);
+    startScript(path.join(extractionDir, 'start.sh'),fname);
+    stopScript(path.join(extractionDir, 'stop.sh'),fname);
+    deleteScript(path.join(extractionDir, 'delete.sh'),fname);
+    updateScript(path.join(extractionDir, 'update.sh'),fname);
+
+
+    
+    triggerScript(fname,40);
+    res.json({
+      message: "File updated Successfully",
       status: true,
     })
 

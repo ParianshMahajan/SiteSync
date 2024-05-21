@@ -77,7 +77,7 @@ module.exports.DeleteSite = async function DeleteSite(req, res) {
         res.json({
             message: "Site Deleted",
             status:true
-        });
+        }); 
         
     } catch (error) {
         res.json({

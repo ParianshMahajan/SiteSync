@@ -12,6 +12,9 @@ const FrontendSchema=new Schema({
     fname:{
         type:String
     },
+    framework:{
+        type:String
+    },
     Status:{
         type:Number,
         default:1
