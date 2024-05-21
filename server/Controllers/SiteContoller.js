@@ -1,6 +1,7 @@
 const FrontendModel = require("../Models/FrontendModel");
 const { triggerScript } = require("../config/VM_Trigger");
 const { deleteDns } = require("./CloudflareController");
+const fs = require("fs");
 
 module.exports.StopSite = async function StopSite(req, res) {
     try {
@@ -66,6 +67,7 @@ module.exports.DeleteSite = async function DeleteSite(req, res) {
             if(triggerScript(site.fname, -1===false)){
                 throw new Error("Script Execution Failed")
             }
+            fs.rmdirSync(site.fpath, { recursive: true });   
             await site.remove();
         }
         else{
