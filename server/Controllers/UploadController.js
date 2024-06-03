@@ -69,8 +69,6 @@ module.exports.ProcessZip = async (req, res) => {
 
     const zipFilePath = req.file.path;
 
-    console.log(zipFilePath);
-
     decompress(zipFilePath, extractionDir)
 
 
