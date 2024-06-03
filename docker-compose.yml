@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  api:
+    image: ccs/sitesync
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "2123:2123"
+    volumes:
+      - "/home/paria/frontend:/app/uploads"
+    restart: always
