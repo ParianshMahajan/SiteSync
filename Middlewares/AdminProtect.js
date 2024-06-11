@@ -24,7 +24,7 @@ module.exports.isAdmin=async(req,res,next)=>{
     
         
     } catch (error) {
-        res.json({
+        res.status(500).json({
             message:error.message,
             status:false
         })

@@ -13,7 +13,7 @@ module.exports.verifyLogIn = async function verifyLogIn(req, res) {
       });
       
     } catch (error) {
-      res.json({
+      res.status(500).json({
         message: error.message,
         status: false,
       });
@@ -44,7 +44,7 @@ module.exports.createJWT=async(req,res)=>{
             throw new Error("Invalid Credentials");
         }
     } catch (error) {
-        res.json({
+        res.status(500).json({
             message:error.message,
             status:false
         })
@@ -62,32 +62,10 @@ module.exports.AllSites=async(req,res)=>{
         });
         
     } catch (error) {
-        res.json({
+        res.status(500).json({
             message:error.message,
             status:false
         })
     }
 }
 
-
-module.exports.isAvailable=async(req,res)=>{
-    try {
-        let site=await FrontendModel.findOne({fname:req.body.Name});
-
-        if(site){
-            throw new Error("Site is not Available");
-        }
-        else{
-            res.json({
-                status:true,
-                message:"Site is Available"
-            });
-        }
-            
-    } catch (error) {
-        res.json({
-            message:error.message,
-            status:false
-        })
-    }
-}

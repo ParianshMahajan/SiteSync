@@ -5,7 +5,7 @@ const fs = require('fs');
 const { exec } = require('child_process'); 
 
 
-const { UploadZip, ProcessZip } = require('../Controllers/UploadController');
+const { UploadZip, ProcessZip, ReplaceZip, isAvailable } = require('../Controllers/UploadController');
 
 const app = express();
 const UploadRouter = express.Router();
@@ -44,6 +44,12 @@ UploadRouter
 .route('/')
 .post(upload.single('file'),UploadZip,ProcessZip);
 
+UploadRouter
+.route('/replace')
+.post(upload.single('file'),UploadZip,ReplaceZip);
 
+UploadRouter
+.route('/isavailable')
+.post(isAvailable)
 
 module.exports = UploadRouter;

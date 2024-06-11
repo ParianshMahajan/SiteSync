@@ -23,7 +23,7 @@ module.exports.StopSite = async function StopSite(req, res) {
         });
         
     } catch (error) {
-        res.json({
+        res.status(500).json({
             message:error.message,
             status:false
         })
@@ -51,7 +51,7 @@ module.exports.StartSite = async function StartSite(req, res) {
         });
         
     } catch (error) {
-        res.json({
+        res.status(500).json({
             message:error.message,
             status:false
         })
@@ -80,7 +80,7 @@ module.exports.DeleteSite = async function DeleteSite(req, res) {
         }); 
         
     } catch (error) {
-        res.json({
+        res.status(500).json({
             message:error.message,
             status:false
         })

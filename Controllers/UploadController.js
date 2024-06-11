@@ -17,22 +17,11 @@ const FrontendModel = require("../Models/FrontendModel");
 const { triggerScript } = require("../config/VM_Trigger");
 const { createDns } = require("./CloudflareController");
 
-let url = `https://api.cloudflare.com/client/v4/zones/${process.env.zone_id}/dns_records`;
-let headers = {
-  Authorization: `Bearer ${process.env.api_token}`,
-  "Content-Type": "application/json",
-};
-
 const uploadDir = path.join(__dirname, "../uploads");
 
 module.exports.UploadZip = async (req, res, next) => {
   try {
     if (!req.file) {
-      return res.json({
-        message: "No file was uploaded.",
-        status: false,
-      });
-
       throw new Error("No file Uploaded");
     } else {
       next();
@@ -90,13 +79,14 @@ module.exports.ProcessZip = async (req, res) => {
     let site=await FrontendModel.create(siteData);
     triggerScript(fname,20);
     res.json({
-      message: "File Uploaded Successfully",
+      message: "Site Deployed Successfully",
       status: true,
+      site:site.SiteDNS
     })
-
-    } catch (error) {
-        res.status(500).json({
-            message: error.message,
+  } 
+  catch (error) {
+    res.status(500).json({
+      message: error.message,
     });
   }
 };
@@ -143,3 +133,26 @@ module.exports.ReplaceZip = async (req, res) => {
     });
   }
 };
+
+
+module.exports.isAvailable=async(req,res)=>{
+  try {
+      let site=await FrontendModel.findOne({fname:req.body.Name});
+
+      if(site){
+          throw new Error("Site is not Available");
+      }
+      else{
+          res.json({
+              status:true,
+              message:"Site is Available"
+          });
+      }
+          
+  } catch (error) {
+      res.status(500).json({
+          message:error.message,
+          status:false
+      })
+  }
+}
