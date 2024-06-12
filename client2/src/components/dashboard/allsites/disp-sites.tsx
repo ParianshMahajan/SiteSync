@@ -5,9 +5,11 @@ import { SearchSite } from './sites-serach';
 import type { Site } from '@/services/manage-sites';
 import SitesTable from './sites-table';
 
+interface DisplaySitesProps {
+    setSite: (site: Site) => void;
+}
 
-
-export default function DisplaySites(): React.JSX.Element {
+export default function DisplaySites({setSite}:DisplaySitesProps): React.JSX.Element {
     const [sites, setSites] = React.useState<Site[]>([]);
     const [searchResults, setSearchResults] = React.useState<Site[]>([]);
 
@@ -20,7 +22,7 @@ export default function DisplaySites(): React.JSX.Element {
   return (
     <Paper sx={{p:2,width:{ xs:1, md: '60%' }}} elevation={10} >
         <SearchSite setSites={setSites} setSearchResults={setSearchResults} filters={filters} setFilters={setFilters} />  
-        <SitesTable sites={sites} filters={filters} searchResults={searchResults} setSites={setSites} />
+        <SitesTable sites={sites} filters={filters} searchResults={searchResults} setSites={setSites} setSite={setSite} />
     </Paper>
   );
 }

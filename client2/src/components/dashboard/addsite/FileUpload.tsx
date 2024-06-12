@@ -11,10 +11,11 @@ interface FileWithRelativePath {
 
 interface FileUploadProps {
   files: File[];
+  height?: string;
   setFiles: (files: File[]) => void;
 }
 
-export default function FileUpload({ files, setFiles }: FileUploadProps): React.JSX.Element {
+export default function FileUpload({ files, setFiles,height }: FileUploadProps): React.JSX.Element {
   const [dragging, setDragging] = useState(false);
   const [dirName, setDirName] = useState('');
 
@@ -46,6 +47,7 @@ export default function FileUpload({ files, setFiles }: FileUploadProps): React.
       if (item.isFile) {
         (item as FileSystemFileEntry).file((file) => {
           setDirName(path.split('/')[0]);
+          console.log({ file, relativePath: path + file.name });
           allFiles.push({ file, relativePath: path + file.name });
           if (allFiles.length === droppedItems.length) {
             setFiles(allFiles);
@@ -87,7 +89,7 @@ export default function FileUpload({ files, setFiles }: FileUploadProps): React.
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              height: '35vh',
+              height,
               cursor: 'pointer',
               px: 6,
               backgroundColor: dragging ? '#080808' : '',

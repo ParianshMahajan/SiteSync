@@ -127,7 +127,7 @@ export default function SiteForm(): React.JSX.Element {
       }}
     >
       <Box width={1}>
-        <FileUpload files={files} setFiles={setFiles} />
+        <FileUpload files={files} setFiles={setFiles}  height='40vh'/>
       </Box>
 
       <Paper sx={{ px: 4, pt: 4, pb: 6, width: 1 }}>

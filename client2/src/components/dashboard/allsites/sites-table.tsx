@@ -22,6 +22,7 @@ interface SiteTableProps {
   sites: Site[];
   searchResults: Site[];
   setSites: (sites: Site[]) => void;
+  setSite: (site: Site) => void;
   filters: { isSearching: boolean; isRunning: boolean; isStopped: boolean };
 }
 
@@ -32,7 +33,7 @@ const ensureUrlScheme = (url: string): string => {
   return url;
 };
 
-export default function SitesTable({ sites, filters, setSites,searchResults }: SiteTableProps): React.JSX.Element {
+export default function SitesTable({ sites, filters, setSite,setSites,searchResults }: SiteTableProps): React.JSX.Element {
   const [pagination, setPagination] = React.useState({ page: 1, totalPages: 1 });
   const [err, setErr] = React.useState('');
 
@@ -67,6 +68,11 @@ export default function SitesTable({ sites, filters, setSites,searchResults }: S
     if(page===pagination.page) return;
     setPagination({ ...pagination, page });
   };
+
+
+  const handleRowClick = (site: Site): void => {
+    setSite(site);
+  }
 
   return (
     <Box sx={{ mt: 2}}>
@@ -110,7 +116,8 @@ export default function SitesTable({ sites, filters, setSites,searchResults }: S
           {sites.map((site: Site) => {
             const siteUrl = ensureUrlScheme(site.SiteDNS);
             return (
-              <TableRow sx={{cursor:"pointer"}} hover key={site._id}>
+              // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression -- onClick expects void
+              <TableRow sx={{cursor:"pointer"}} hover key={site._id} onClick={()=>handleRowClick(site)} >
                 <TableCell>
                   <Typography variant="h6">
                     <Link underline="hover" color="inherit" href={siteUrl} target="_blank">
