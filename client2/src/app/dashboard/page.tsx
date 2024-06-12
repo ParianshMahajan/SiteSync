@@ -3,14 +3,14 @@ import type { Metadata } from 'next';
 
 import { config } from '@/config';
 import { Box, Typography } from '@mui/material';
-import SiteForm from '@/components/dashboard/overview/SiteForm';
+import SiteForm from '@/components/dashboard/addsite/SiteForm';
 
 export const metadata = { title: `Add Site | ${config.site.name}` } satisfies Metadata;
 
 export default function Page(): React.JSX.Element {
   return (
-    <Box sx={{padding:"2%"}}>
-      <Typography variant='h1'>SiteSync</Typography>
+    <Box sx={{p:3}}>
+      <Typography variant='h2'>Add Sites</Typography>
 
       <Box mt={4}>
         <SiteForm/>
