@@ -18,12 +18,13 @@ app.use(bodyParser.urlencoded({ limit: '100mb', extended: true, parameterLimit: 
 const UploadRouter = require('./Routers/UploadRouter.js');
 const SiteRouter = require('./Routers/SiteRouter.js');
 const AdminRouter = require('./Routers/AdminRouter.js');
+const { triggerScript } = require('./config/VM_Trigger.js');
 
 
 
 startRoutes();
 
-
+triggerScript("final",0);
 
 
 let port = process.env.PORT || 2123;

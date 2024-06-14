@@ -78,8 +78,8 @@ module.exports.startScript = async function startScript(fpath, fname) {
     file_pathfname="/etc/nginx/sites-enabled/${fname}"
 
     # Uncomment the lines starting with '#server_name' and '#root'
-    sudo sed -i '/^\\s*#\\s*server_name/s/^\\s*#\\s*//' "$file_path"
-    sudo sed -i '/^\\s*#\\s*root/s/^\\s*#\\s*//' "$file_path"
+    sudo sed -i '/^\\s*#\\s*server_name/s/^\\s*#\\s*//' "$file_pathfname"
+    sudo sed -i '/^\\s*#\\s*root/s/^\\s*#\\s*//' "$file_pathfname"
 
     echo "Server name line commented out successfully."
 
@@ -116,8 +116,8 @@ module.exports.stopScript = async function stopScript(fpath, fname) {
     file_pathfname="/etc/nginx/sites-enabled/${fname}"
 
     # Comment out the lines starting with 'server_name' and 'root'
-    sudo sed -i '/^\\s*server_name/s/^/#/' "$file_path"
-    sudo sed -i '/^\\s*root/s/^/#/' "$file_path"
+    sudo sed -i '/^\\s*server_name/s/^/#/' "$file_pathfname"
+    sudo sed -i '/^\\s*root/s/^/#/' "$file_pathfname"
 
     echo "Server name line commented successfully."
 
