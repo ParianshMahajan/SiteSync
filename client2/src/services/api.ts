@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-export const url = 'http://localhost:2123/';
-// export const url = 'http://apisitesync.pariansh.tech/';
+// export const url = 'http://localhost:2123/';
+export const url = 'http://apisitesync.pariansh.tech/';
 
 export const authApi = axios.create({
   baseURL: url,

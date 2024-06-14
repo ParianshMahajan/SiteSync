@@ -27,9 +27,9 @@ export const updateSite = async ({id,status}:SiteStatus): Promise<SiteResponseSt
     };
 
     let backLink='not-found/';
-    if (status === 0) {
+    if (status === 1) {
         backLink = 'start/';
-    } else if (status === 1) {
+    } else if (status === 0) {
         backLink = 'stop/';
     } else if(status===-1) {
         backLink='delete/'
