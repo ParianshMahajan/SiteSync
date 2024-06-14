@@ -52,13 +52,56 @@ module.exports.createJWT=async(req,res)=>{
 };
 
 
-module.exports.AllSites=async(req,res)=>{
+module.exports.SearchSite=async(req,res)=>{
     try {
-        let sites=await FrontendModel.find();
+        let qeury=req.body.query;
+        let sites=await FrontendModel.find({$or:[{fname:{$regex:new RegExp(qeury,'i')}}]});
 
         res.json({
             status:true,
             sites:sites
+        });
+        
+    } catch (error) {
+        res.status(500).json({
+            message:error.message,
+            status:false
+        })
+    }
+}
+
+
+module.exports.AllSites=async(req,res)=>{
+    try {
+
+        const page = req.body.page || 1;
+        const pageSize = req.body.pageSize;
+
+        const skip = (page - 1) * pageSize;
+
+        let filters=req.body.filters;
+
+        let totalCount=await FrontendModel.countDocuments();
+        let totalPages=Math.ceil(totalCount / pageSize);
+
+
+
+        let sites;
+        if(filters.isRunning){
+            sites=await FrontendModel.find({Status:1}).skip(skip).limit(pageSize);
+        }
+        else if(filters.isStopped){
+            sites=await FrontendModel.find({Status:0}).skip(skip).limit(pageSize);
+        }
+        else{
+            sites=await FrontendModel.find().skip(skip).limit(pageSize);
+        }
+
+
+        res.json({
+            status:true,
+            sites:sites,
+            totalPages:totalPages,
         });
         
     } catch (error) {

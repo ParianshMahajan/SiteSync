@@ -13,7 +13,7 @@ const FrontendSchema=new Schema({
         type:String
     },
     framework:{
-        type:String
+        type:Boolean
     },
     Status:{
         type:Number,

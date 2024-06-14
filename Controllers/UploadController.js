@@ -12,6 +12,7 @@ const {
   stopScript,
   deleteScript,
   updateScript,
+  renameScript,
 } = require("./ScriptController");
 const FrontendModel = require("../Models/FrontendModel");
 const { triggerScript } = require("../config/VM_Trigger");
@@ -43,10 +44,6 @@ module.exports.ProcessZip = async (req, res) => {
     let dnsResult=await createDns(fname);
     console.log(dnsResult);
     if(dnsResult==false){
-      return res.json({
-        message:'DNS Creation Failed',
-        status:false
-      });
       throw new Error('DNS Creation Failed');
     }
 
@@ -67,7 +64,9 @@ module.exports.ProcessZip = async (req, res) => {
     startScript(path.join(extractionDir, 'start.sh'),fname);
     stopScript(path.join(extractionDir, 'stop.sh'),fname);
     deleteScript(path.join(extractionDir, 'delete.sh'),fname);
-    
+    updateScript(path.join(extractionDir, 'update.sh'));
+    renameScript(path.join(extractionDir, 'rename.sh'),fname);
+
     let siteData={
         SiteDNS:dnsResult.name,
         DNSId:dnsResult.id,
