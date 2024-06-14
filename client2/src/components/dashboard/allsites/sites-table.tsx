@@ -76,7 +76,7 @@ export default function SitesTable({ sites, filters, setSite,setSites,searchResu
 
   return (
     <Box sx={{ mt: 2}}>
-      <Table sx={{minHeight:"30vh"}} >
+      <Table sx={{minHeight:"40vh"}} >
         <TableHead>
           <TableRow>
             <TableCell sx={{ width: '65%' }}>
@@ -97,7 +97,7 @@ export default function SitesTable({ sites, filters, setSite,setSites,searchResu
         ) : err ? (
           <TableCell colSpan={2} height={1}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height:1 }}>
-            <Typography color="red" textAlign='center' variant="h6">
+            <Typography color="var(--mui-palette-error-main)" textAlign='center' variant="h6">
               {err}
             </Typography>
           </Box>

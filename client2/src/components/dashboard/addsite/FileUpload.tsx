@@ -10,12 +10,12 @@ interface FileWithRelativePath {
 }
 
 interface FileUploadProps {
-  files: File[];
+  files: FileWithRelativePath[];
   height?: string;
-  setFiles: (files: File[]) => void;
+  setFiles: (files: FileWithRelativePath[]) => void;
 }
 
-export default function FileUpload({ files, setFiles,height }: FileUploadProps): React.JSX.Element {
+export default function FileUpload({ files, setFiles, height }: FileUploadProps): React.JSX.Element {
   const [dragging, setDragging] = useState(false);
   const [dirName, setDirName] = useState('');
 
@@ -47,7 +47,6 @@ export default function FileUpload({ files, setFiles,height }: FileUploadProps):
       if (item.isFile) {
         (item as FileSystemFileEntry).file((file) => {
           setDirName(path.split('/')[0]);
-          console.log({ file, relativePath: path + file.name });
           allFiles.push({ file, relativePath: path + file.name });
           if (allFiles.length === droppedItems.length) {
             setFiles(allFiles);
@@ -56,8 +55,8 @@ export default function FileUpload({ files, setFiles,height }: FileUploadProps):
       } else if (item.isDirectory) {
         const dirReader = (item as FileSystemDirectoryEntry).createReader();
         dirReader.readEntries((entries) => {
-          entries.forEach((entry) => traverseFileTree(entry, path + item.name + '/'));
-          });
+          entries.forEach((entry) => { traverseFileTree(entry, `${path + item.name  }/`); });
+        });
       }
     };
     droppedItems.forEach((item) => {
@@ -73,18 +72,23 @@ export default function FileUpload({ files, setFiles,height }: FileUploadProps):
     if (inputFiles) {
       const selectedFiles = Array.from(inputFiles);
       setDirName(selectedFiles[0].webkitRelativePath.split('/')[0]);
-      setFiles(selectedFiles);
+      const allFiles: FileWithRelativePath[] = [];
+      selectedFiles.forEach((file) => {
+        allFiles.push({ file, relativePath: file.webkitRelativePath });
+      });
+      setFiles(allFiles);
     }
   };
 
   return (
     <Paper elevation={10} sx={{ padding: '1%', width: 1 }}>
       <form>
+        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- Label is complex */}
         <label htmlFor="file-input">
           <Box
             className={`file-uploader ${dragging ? 'dragging' : ''}`}
             sx={{
-              border: '2px dashed var(--mui-palette-neutral-400)',
+              border: '2px dashed #adadad',
               borderRadius: '10px',
               display: 'flex',
               alignItems: 'center',
@@ -92,7 +96,8 @@ export default function FileUpload({ files, setFiles,height }: FileUploadProps):
               height,
               cursor: 'pointer',
               px: 6,
-              backgroundColor: dragging ? '#080808' : '',
+              backgroundColor: dragging ? '#e7e7e7' : '#f9f9f9',
+              transition: 'background-color 0.3s',
             }}
             onDragEnter={handleDragEnter}
             onDragOver={handleDragOver}
@@ -107,8 +112,8 @@ export default function FileUpload({ files, setFiles,height }: FileUploadProps):
               onChange={handleFileInputChange}
               multiple
             />
-            <Typography variant="h6">
-              {files.length > 0 ? dirName : 'Drag and drop files here or click to select files'}
+            <Typography variant="body1" sx={{ whiteSpace: 'pre-line' }} textAlign="center">
+              {files.length > 0 ? dirName : 'Drag and drop files here\nor\nclick to select files'}
             </Typography>
           </Box>
         </label>

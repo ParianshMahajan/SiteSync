@@ -13,7 +13,6 @@ export default function Page(): React.JSX.Element {
   return (
     <Box sx={{p:3}}>
       <Typography variant="h2">Manage Sites</Typography>
-      
       <LowerCont/>
     </Box>
   );

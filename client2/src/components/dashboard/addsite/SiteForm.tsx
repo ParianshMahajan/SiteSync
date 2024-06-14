@@ -14,6 +14,10 @@ import Disabled from '@/components/core/disabled';
 
 import FileUpload from './FileUpload';
 
+export interface FileWithRelativePath {
+  file: File;
+  relativePath: string;
+}
 
 const ensureUrlScheme = (url: string):string => {
   if (!/^https?:\/\//i.test(url)) {
@@ -25,7 +29,7 @@ const ensureUrlScheme = (url: string):string => {
 
 
 export default function SiteForm(): React.JSX.Element {
-  const [files, setFiles] = React.useState<File[]>([]);
+  const [files, setFiles] = React.useState<FileWithRelativePath[]>([]);
 
   const [data, setData] = React.useState({
     fname: '',
@@ -69,13 +73,13 @@ export default function SiteForm(): React.JSX.Element {
 
   const zipFolder = async (): Promise<Blob> => {
     const zip = new JSZip();
-    const selectedDirectory = files[0].webkitRelativePath.split('/')[0];
+    const selectedDirectory = files[0].relativePath.split('/')[0];
 
     for (const file of files) {
-      const filePath = file.webkitRelativePath;
+      const filePath = file.relativePath;
       if (filePath.startsWith(`${selectedDirectory}/`)) {
-        zip.file(filePath.substring(selectedDirectory.length + 1), file);
-        totalSize += file.size;
+        zip.file(filePath.substring(selectedDirectory.length + 1), file.file);
+        totalSize += file.file.size;
       }
     }
     return await zip.generateAsync({ type: 'blob' });

@@ -57,3 +57,23 @@ export const siteAvailableStatus = async ({name}:SiteAvailableData): Promise<Upl
     const res = await uploadApi.post('isavailable/',data);
     return res;
 };
+
+
+export const replaceFile = async ({formData,setUploadProgress,totalSize}:UploadFileData): Promise<UploadResponseStatus> => {
+    // const token = (await authClient.getToken()).data;
+  
+    // if (token === null || token === undefined) {
+    //   throw new Error('You must be logged in to perform this action');
+    // }
+    const res = await uploadApi.post('replace/', formData,{
+      headers: {
+        "Content-Type": "multipart/form-data",
+        // Authorization: 'Bearer 123',
+      },
+      onUploadProgress: (progressEvent) => {
+        const progress = (progressEvent.loaded / totalSize) * 100;
+        setUploadProgress(progress);
+      },
+    });
+    return res;
+};
