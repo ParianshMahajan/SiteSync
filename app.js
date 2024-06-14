@@ -24,8 +24,6 @@ const { triggerScript } = require('./config/VM_Trigger.js');
 
 startRoutes();
 
-triggerScript("final",0);
-
 
 let port = process.env.PORT || 2123;
 app.listen(port, () => {
