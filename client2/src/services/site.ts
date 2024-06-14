@@ -4,6 +4,7 @@ import { siteApi } from "./api";
 interface SiteStatus {
     id:string;
     status:number;
+    fname:number;
 }
 
 export type SiteResponseStatus = AxiosResponse<SiteStatus>;
@@ -15,7 +16,7 @@ export interface SuccessResponse{
 
 
 
-export const startSite = async ({id}:{id:string;}): Promise<SiteResponseStatus> => {
+export const updateSite = async ({id,status}:SiteStatus): Promise<SiteResponseStatus> => {
     // const token = (await authClient.getToken()).data;
   
     // if (token === null || token === undefined) {
@@ -24,7 +25,17 @@ export const startSite = async ({id}:{id:string;}): Promise<SiteResponseStatus> 
     const data = {
         id,
     };
-    const res = await siteApi.post('start/', data,{
+
+    let backLink='not-found/';
+    if (status === 0) {
+        backLink = 'start/';
+    } else if (status === 1) {
+        backLink = 'stop/';
+    } else if(status===-1) {
+        backLink='delete/'
+    }
+
+    const res = await siteApi.post(backLink, data,{
       headers: {
         // Authorization: 'Bearer 123',
       },
@@ -32,8 +43,7 @@ export const startSite = async ({id}:{id:string;}): Promise<SiteResponseStatus> 
     return res;
 };
 
-
-export const deleteSite = async ({id}:{id:string;}): Promise<SiteResponseStatus> => {
+export const renameSite = async ({id,fname}:SiteStatus): Promise<SiteResponseStatus> => {
     // const token = (await authClient.getToken()).data;
   
     // if (token === null || token === undefined) {
@@ -41,26 +51,11 @@ export const deleteSite = async ({id}:{id:string;}): Promise<SiteResponseStatus>
     // }
     const data = {
         id,
+        fname,
     };
-    const res = await siteApi.post('delete/', data,{
-      headers: {
-        // Authorization: 'Bearer 123',
-      },
-    });
-    return res;
-};
 
 
-export const stopSite = async ({id}:{id:string;}): Promise<SiteResponseStatus> => {
-    // const token = (await authClient.getToken()).data;
-  
-    // if (token === null || token === undefined) {
-    //   throw new Error('You must be logged in to perform this action');
-    // }
-    const data = {
-        id,
-    };
-    const res = await siteApi.post('stop/', data,{
+    const res = await siteApi.post('rename/', data,{
       headers: {
         // Authorization: 'Bearer 123',
       },

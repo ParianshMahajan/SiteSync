@@ -102,9 +102,10 @@ export default function SitesTable({ sites, filters, setSite,setSites,searchResu
             </Typography>
           </Box>
               </TableCell>
-        ) : null}
+        ) : (
 
-        <TableBody>
+          
+          <TableBody>
           {sites.length === 0 && !isPending && !err ? (
             <TableRow>
               <TableCell colSpan={2}>
@@ -132,6 +133,7 @@ export default function SitesTable({ sites, filters, setSite,setSites,searchResu
             );
           })}
         </TableBody>
+        )}
       </Table>
 
         <Box sx={{mt:2, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>

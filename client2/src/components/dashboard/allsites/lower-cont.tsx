@@ -1,9 +1,9 @@
 'use client';
 import * as React from 'react';
 import { Box } from '@mui/material';
-import DisplaySites from './disp-sites';
-import SiteInfo from './site-info';
+import DisplaySites from './SitesDisplay/disp-sites';
 import type { Site } from '@/services/manage-sites';
+import SiteInfo from './SitesInfo/site-info';
 
 
 export default function LowerCont(): React.JSX.Element {
