@@ -81,22 +81,24 @@ module.exports.AllSites=async(req,res)=>{
 
         let filters=req.body.filters;
 
-        let totalCount=await FrontendModel.countDocuments();
-        let totalPages=Math.ceil(totalCount / pageSize);
 
 
 
-        let sites;
+        let sites,totalCount;
         if(filters.isRunning){
+            totalCount=await FrontendModel.countDocuments({Status:1});
             sites=await FrontendModel.find({Status:1}).skip(skip).limit(pageSize);
         }
         else if(filters.isStopped){
+            totalCount=await FrontendModel.countDocuments({Status:0});
             sites=await FrontendModel.find({Status:0}).skip(skip).limit(pageSize);
         }
         else{
+            totalCount=await FrontendModel.countDocuments();
             sites=await FrontendModel.find().skip(skip).limit(pageSize);
         }
 
+        let totalPages=Math.ceil(totalCount / pageSize);
 
         res.json({
             status:true,

@@ -5,7 +5,7 @@ const fs = require("fs");
 
 module.exports.StopSite = async function StopSite(req, res) {
     try {
-        let site = await FrontendModel.findOne(req.body.id);
+        let site = await FrontendModel.findById(req.body.id);
         if(site.Status == 1){
             site.Status = 0;
             if(triggerScript(site.fname, 0)===false){
@@ -33,7 +33,7 @@ module.exports.StopSite = async function StopSite(req, res) {
 
 module.exports.StartSite = async function StartSite(req, res) {
     try {
-        let site = await FrontendModel.findOne(req.body.id);
+        let site = await FrontendModel.findById(req.body.id);
         if(site.Status == 0){
             site.Status = 1;
             if(triggerScript(site.fname, 1)===false){
@@ -62,9 +62,9 @@ module.exports.StartSite = async function StartSite(req, res) {
 
 module.exports.DeleteSite = async function DeleteSite(req, res) {
     try {
-        let site = await FrontendModel.findOne(req.body.id);
+        let site = await FrontendModel.findById(req.body.id);
         if(await deleteDns(site.DNSId)){
-            if(!triggerScript(site.fname, -1)){
+            if(triggerScript(site.fname, -1)===false){
                 throw new Error("Script Execution Failed")
             }
             fs.rmdirSync(site.fpath, { recursive: true });   
@@ -78,6 +78,7 @@ module.exports.DeleteSite = async function DeleteSite(req, res) {
             message: "Site Deleted",
             status:true
         }); 
+
         
     } catch (error) {
         res.status(500).json({
@@ -90,10 +91,11 @@ module.exports.DeleteSite = async function DeleteSite(req, res) {
 
 module.exports.RenameSite = async function RenameSite(req, res) {
     try {
+        console.log(req.body);
         const newFname = req.body.fname;
-        let site = await FrontendModel.findOne(req.body.id);
+        let site = await FrontendModel.findById(req.body.id);
         let oldDnsId = site.DNSId;
-        let dnsResult=await createDns(fname);
+        let dnsResult=await createDns(newFname);
         console.log(dnsResult);
         
         if(dnsResult!=false){
