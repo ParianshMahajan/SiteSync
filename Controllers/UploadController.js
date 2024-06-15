@@ -76,7 +76,7 @@ module.exports.ProcessZip = async (req, res) => {
     }
     
     let site=await FrontendModel.create(siteData);
-    triggerScript(fname,20);
+    await triggerScript(fname,20);
     res.json({
       message: "Site Deployed Successfully",
       status: true,
@@ -120,7 +120,7 @@ module.exports.ReplaceZip = async (req, res) => {
 
 
     
-    triggerScript(fname,40);
+    await triggerScript(fname,40);
     res.json({
       message: "File updated Successfully",
       status: true,
