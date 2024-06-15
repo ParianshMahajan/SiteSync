@@ -68,7 +68,7 @@ module.exports.DeleteSite = async function DeleteSite(req, res) {
                 throw new Error("Script Execution Failed")
             }
             fs.rmdirSync(site.fpath, { recursive: true });   
-            await site.remove();
+            await frontendModel.deleteOne({_id:site._id});
         }
         else{
             throw new Error("Failed to delete DNS");
