@@ -9,8 +9,9 @@ module.exports.StopSite = async function StopSite(req, res) {
         let site = await FrontendModel.findById(req.body.id);
         if(site.Status == 1){
             site.Status = 0;
-            if(await triggerScript(site.fname, 0)===false){
-                throw new Error("Script Execution Failed")
+            const scriptResult = await triggerScript(site.fname, 0);
+            if (scriptResult === false) {
+                throw new Error("Script Execution Failed");
             }
             await site.save();
         }
@@ -34,23 +35,26 @@ module.exports.StopSite = async function StopSite(req, res) {
 
 module.exports.StartSite = async function StartSite(req, res) {
     try {
+        
         let site = await FrontendModel.findById(req.body.id);
         if(site.Status == 0){
             site.Status = 1;
-            if(await triggerScript(site.fname, 1)===false){
-                throw new Error("Script Execution Failed")
+            const scriptResult = await triggerScript(site.fname, 1);
+            if (scriptResult === false) {
+                throw new Error("Script Execution Failed");
             }
             await site.save();
+            res.json({
+              message: "Site Started",
+              status: true
+            });
+
+        } 
+        else {
+          throw new Error("Site Already Running");
         }
-        else{
-            throw new Error("Site Already Running");
-        }
-            
-        res.json({
-            message: "Site Started",
-            status:true
-        });
-        
+    
+
     } catch (error) {
         res.status(500).json({
             message:error.message,
@@ -65,8 +69,9 @@ module.exports.DeleteSite = async function DeleteSite(req, res) {
     try {
         let site = await FrontendModel.findById(req.body.id);
         if(await deleteDns(site.DNSId)){
-            if(await triggerScript(site.fname, -1)===false){
-                throw new Error("Script Execution Failed")
+            const scriptResult = await triggerScript(site.fname, -1);
+            if (scriptResult === false) {
+                throw new Error("Script Execution Failed");
             }
             fs.rmdirSync(site.fpath, { recursive: true });   
             await FrontendModel.deleteOne({_id:site._id});
@@ -105,8 +110,9 @@ module.exports.RenameSite = async function RenameSite(req, res) {
             site.SiteDNS = dnsResult.name;
 
 
-            if(await triggerScript(site.fname, 100, newFname)===false){
-                throw new Error("Script Execution Failed")
+            const scriptResult = await triggerScript(site.fname, 100, newFname);
+            if (scriptResult === false) {
+                throw new Error("Script Execution Failed");
             }
 
             const newFolderPath = path.join(path.dirname(site.fpath), newFname);
