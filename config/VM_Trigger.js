@@ -31,7 +31,7 @@ module.exports.triggerScript = (fname, status, newFname) => {
         return reject(new Error("Invalid status code"));
       }
 
-      const scriptPath = `${process.env.VMPath}/${fname}/scipts/${sc}`;
+      const scriptPath = `${process.env.VMPath}/${fname}/scripts/${sc}`;
       conn.on('ready', () => {
         console.log('SSH Connection Established');
 
