@@ -16,7 +16,7 @@ const {
 } = require("./ScriptController");
 const FrontendModel = require("../Models/FrontendModel");
 const { triggerScript } = require("../config/VM_Trigger");
-const { createDns } = require("./CloudflareController");
+const { createDns, isRecordExists } = require("./CloudflareController");
 
 const uploadDir = path.join(__dirname, "../uploads");
 
@@ -52,20 +52,21 @@ module.exports.ProcessZip = async (req, res) => {
 
     const extractionDir = path.join(uploadDir, fname);
     fs.mkdirSync(extractionDir, { recursive: true });
-
     const zipFilePath = req.file.path;
-
     decompress(zipFilePath, extractionDir)
 
 
 
+    const scriptsDir = path.join(extractionDir, 'scripts');
+    fs.mkdirSync(scriptsDir, { recursive: true });
+
     // Creating Scripts
-    createScript(path.join(extractionDir, 'create.sh'),fname,dnsResult.name,framework);
-    startScript(path.join(extractionDir, 'start.sh'),fname);
-    stopScript(path.join(extractionDir, 'stop.sh'),fname);
-    deleteScript(path.join(extractionDir, 'delete.sh'),fname);
-    updateScript(path.join(extractionDir, 'update.sh'));
-    renameScript(path.join(extractionDir, 'rename.sh'),fname);
+    createScript(path.join(scriptsDir, 'create.sh'),fname,dnsResult.name,framework);
+    startScript(path.join(scriptsDir, 'start.sh'),fname);
+    stopScript(path.join(scriptsDir, 'stop.sh'),fname);
+    deleteScript(path.join(scriptsDir, 'delete.sh'),fname);
+    updateScript(path.join(scriptsDir, 'update.sh'));
+    renameScript(path.join(scriptsDir, 'rename.sh'),fname);
 
     let siteData={
         SiteDNS:dnsResult.name,
@@ -76,7 +77,10 @@ module.exports.ProcessZip = async (req, res) => {
     }
     
     let site=await FrontendModel.create(siteData);
-    await triggerScript(fname,20);
+    const scriptResult = await triggerScript(site.fname, 20);
+    if (scriptResult === false) {
+        throw new Error("Script Execution Failed");
+    }
     res.json({
       message: "Site Deployed Successfully",
       status: true,
@@ -96,6 +100,7 @@ module.exports.ReplaceZip = async (req, res) => {
   try {
     const site = await FrontendModel.findOne(req.body.id);
     const fname = site.fname;
+    const dns = site.SiteDNS;
     const framework = site.framework;
 
 
@@ -111,16 +116,23 @@ module.exports.ReplaceZip = async (req, res) => {
     decompress(zipFilePath, extractionDir)
 
 
+    const scriptsDir = path.join(extractionDir, 'scripts');
+    fs.mkdirSync(scriptsDir, { recursive: true });
 
-    createScript(path.join(extractionDir, 'create.sh'),fname,dnsResult.name,framework);
-    startScript(path.join(extractionDir, 'start.sh'),fname);
-    stopScript(path.join(extractionDir, 'stop.sh'),fname);
-    deleteScript(path.join(extractionDir, 'delete.sh'),fname);
-    updateScript(path.join(extractionDir, 'update.sh'),fname);
+    // Creating Scripts
+    createScript(path.join(scriptsDir, 'create.sh'),fname,dns,framework);
+    startScript(path.join(scriptsDir, 'start.sh'),fname);
+    stopScript(path.join(scriptsDir, 'stop.sh'),fname);
+    deleteScript(path.join(scriptsDir, 'delete.sh'),fname);
+    updateScript(path.join(scriptsDir, 'update.sh'));
+    renameScript(path.join(scriptsDir, 'rename.sh'),fname);
 
 
     
-    await triggerScript(fname,40);
+    const scriptResult = await triggerScript(site.fname, 40);
+    if (scriptResult === false) {
+        throw new Error("Script Execution Failed");
+    }
     res.json({
       message: "File updated Successfully",
       status: true,
@@ -137,11 +149,13 @@ module.exports.ReplaceZip = async (req, res) => {
 module.exports.isAvailable=async(req,res)=>{
   try {
       let site=await FrontendModel.findOne({fname:req.body.Name});
-
       if(site){
           throw new Error("Site is not Available");
       }
       else{
+          if(await isRecordExists(req.body.Name)){
+              throw new Error("DNS is not Available");
+          }
           res.json({
               status:true,
               message:"Site is Available"
