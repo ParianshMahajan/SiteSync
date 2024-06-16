@@ -43,10 +43,8 @@ module.exports.isRecordExists = async function isRecordExists(fname) {
     if (response.status === 200) {
         const records = response.data.result;
         if (records && records.length > 0) {
-            console.log("DNS record exists.");
             return true; // Record with the name already exists
         } else {
-            console.log("DNS record does not exist.");
             return false; // No record with the name exists
         }
     } else {
