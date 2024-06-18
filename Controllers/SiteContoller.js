@@ -120,6 +120,7 @@ module.exports.RenameSite = async function RenameSite(req, res) {
                 throw new Error("Script Execution Failed");
             }
             
+            const oldFolderPath = path.join(path.dirname(site.fpath), site.fname);
             const newFolderPath = path.join(path.dirname(site.fpath), newFname);
             fs.renameSync(oldFolderPath, newFolderPath);
 
