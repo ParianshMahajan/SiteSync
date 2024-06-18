@@ -9,6 +9,17 @@ const connSettings = {
 
 const conn = new Client();
 
+// Establish SSH connection
+conn.on('ready', () => {
+  console.log('SSH Connection Established');
+});
+
+conn.on('error', (err) => {
+  console.error('SSH Connection Error:', err);
+});
+
+conn.connect(connSettings);
+
 module.exports.triggerScript = (fname, status, newFname) => {
   return new Promise((resolve, reject) => {
     try {
@@ -31,40 +42,32 @@ module.exports.triggerScript = (fname, status, newFname) => {
         return reject(new Error("Invalid status code"));
       }
 
+      console.log(sc);
+
       const scriptPath = `${process.env.VMPath}/${fname}/scripts/${sc}`;
-      conn.on('ready', () => {
-        console.log('SSH Connection Established');
+      
+      // Execute script on established SSH connection
+      conn.exec(`echo ${process.env.VMPassword} | sudo -S bash ${scriptPath}${scriptArgs}`, (err, stream) => {
+        if (err) {
+          return reject(err);
+        }
 
-        conn.exec(`echo ${process.env.VMPassword} | sudo -S bash ${scriptPath}${scriptArgs}`, (err, stream) => {
-          if (err) {
-            return reject(err);
+        stream.on('close', (code, signal) => {
+          console.log(`Script execution ended with code ${code}`);
+          if (code === 0) {
+            resolve(true);
+          } else {
+            reject(new Error(`Script ended with non-zero exit code: ${code}`));
           }
-
-          stream.on('close', (code, signal) => {
-            console.log(`Script execution ended with code ${code}`);
-            conn.end();
-            if (code === 0) {
-              resolve(true);
-            } else {
-              reject(new Error(`Script ended with non-zero exit code: ${code}`));
-            }
-          }).on('data', (data) => {
-            console.log(`STDOUT: ${data}`);
-          }).stderr.on('data', (data) => {
-            console.error(`STDERR: ${data}`);
-          });
+        }).on('data', (data) => {
+          console.log(`STDOUT: ${data}`);
+        }).stderr.on('data', (data) => {
+          console.error(`STDERR: ${data}`);
         });
       });
-
-      conn.on('error', (err) => {
-        reject(err);
-      });
-
-      conn.connect(connSettings);
-
     } catch (error) {
       console.log(error.message);
       reject(error);
     }
   });
-}
+};

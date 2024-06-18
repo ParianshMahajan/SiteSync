@@ -8,11 +8,11 @@ module.exports.StopSite = async function StopSite(req, res) {
     try {
         let site = await FrontendModel.findById(req.body.id);
         if(site.Status == 1){
-            site.Status = 0;
             const scriptResult = await triggerScript(site.fname, 0);
             if (scriptResult === false) {
                 throw new Error("Script Execution Failed");
             }
+            site.Status = 0;
             await site.save();
         }
         else{
@@ -35,14 +35,13 @@ module.exports.StopSite = async function StopSite(req, res) {
 
 module.exports.StartSite = async function StartSite(req, res) {
     try {
-        
         let site = await FrontendModel.findById(req.body.id);
         if(site.Status == 0){
-            site.Status = 1;
             const scriptResult = await triggerScript(site.fname, 1);
             if (scriptResult === false) {
                 throw new Error("Script Execution Failed");
             }
+            site.Status = 1;
             await site.save();
             res.json({
               message: "Site Started",
@@ -106,18 +105,18 @@ module.exports.RenameSite = async function RenameSite(req, res) {
         
         if(dnsResult!=false){
 
-            site.DNSId = dnsResult.id;
-            site.SiteDNS = dnsResult.name;
-
-
+            
+            
             const scriptResult = await triggerScript(site.fname, 100, newFname);
             if (scriptResult === false) {
                 throw new Error("Script Execution Failed");
             }
-
+            
             const newFolderPath = path.join(path.dirname(site.fpath), newFname);
             fs.renameSync(oldFolderPath, newFolderPath);
-
+            
+            site.DNSId = dnsResult.id;
+            site.SiteDNS = dnsResult.name;
             site.fname = newFname;
             site.fpath = newFolderPath;
             await site.save();

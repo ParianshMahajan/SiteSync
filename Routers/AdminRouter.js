@@ -1,5 +1,5 @@
 const express = require('express');
-const { createJWT, AllSites, verifyLogIn, SearchSite } = require('../Controllers/AdminController');
+const { createJWT, AllSites, verifyLogIn, SearchSite, updatePassword } = require('../Controllers/AdminController');
 const { isAdmin } = require('../Middlewares/AdminProtect');
 
 const AdminRouter = express.Router();
@@ -14,19 +14,24 @@ AdminRouter
 // Verify
 AdminRouter
 .route('/verify')
-.post(verifyLogIn)
+.get(isAdmin,verifyLogIn)
+
+// Update Password
+AdminRouter
+.route('/update-password')
+.post(isAdmin,updatePassword)
 
 
 
 // Search Site
 AdminRouter
 .route('/searchsite')
-.post(SearchSite)
+.post(isAdmin,SearchSite)
 
 // All Sites
 AdminRouter
 .route('/sites')
-.post(AllSites)
+.post(isAdmin,AllSites)
 
 
 

@@ -6,6 +6,7 @@ const { exec } = require('child_process');
 
 
 const { UploadZip, ProcessZip, ReplaceZip, isAvailable } = require('../Controllers/UploadController');
+const { isAdmin } = require('../Middlewares/AdminProtect');
 
 const app = express();
 const UploadRouter = express.Router();
@@ -42,14 +43,14 @@ const upload = multer({
 
 UploadRouter
 .route('/')
-.post(upload.single('file'),UploadZip,ProcessZip);
+.post(isAdmin,upload.single('file'),UploadZip,ProcessZip);
 
 UploadRouter
 .route('/replace')
-.post(upload.single('file'),UploadZip,ReplaceZip);
+.post(isAdmin,upload.single('file'),UploadZip,ReplaceZip);
 
 UploadRouter
 .route('/isavailable')
-.post(isAvailable)
+.post(isAdmin,isAvailable)
 
 module.exports = UploadRouter;
