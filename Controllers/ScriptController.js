@@ -214,7 +214,7 @@ module.exports.renameScript = async function renameScript(fpath) {
       
       old_conf_path="/etc/nginx/sites-enabled/\$oldFname"
       new_conf_path="/etc/nginx/sites-enabled/\$newFname"
-      scripts_path="${process.env.VMPath}/\${oldFname}"
+      scripts_path="${process.env.VMPath}/\${oldFname}/scripts"
       
       # Rename the configuration file
       if [ -f "\$old_conf_path" ]; then
@@ -244,22 +244,6 @@ module.exports.renameScript = async function renameScript(fpath) {
       
       echo "Configuration file updated successfully."
       
-      # Update the scripts with the new fname
-      for script in start.sh stop.sh; do
-          script_path="\$scripts_path/\$script"
-          sudo sed -i "s|/etc/nginx/sites-enabled/.*|/etc/nginx/sites-enabled/\${newFname}|g" "\$script_path"
-      done
-      
-      delete_script_path="\$scripts_path/delete.sh"
-      sudo sed -i "s|sudo rm /etc/nginx/sites-enabled/.*|sudo rm /etc/nginx/sites-enabled/\${newFname}|g" "\$delete_script_path"
-      
-      # Check if the sed commands were successful
-      if [ $? -ne 0 ]; then
-          echo "Error updating scripts."
-          exit 1
-      fi
-      
-      echo "Scripts updated successfully."
       
       # Reload Nginx
       echo "Reloading Nginx..."

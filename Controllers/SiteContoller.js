@@ -114,6 +114,17 @@ module.exports.RenameSite = async function RenameSite(req, res) {
             
             const newFolderPath = path.join(path.dirname(site.fpath), newFname);
             fs.renameSync(oldFolderPath, newFolderPath);
+
+            const scriptsDir = path.join(newFolderPath, 'scripts');
+            fs.rmdirSync(scriptsDir, { recursive: true });
+            fs.mkdirSync(scriptsDir, { recursive: true });
+
+            createScript(path.join(scriptsDir, 'create.sh'),newFname,dnsResult.name,site.framework);
+            startScript(path.join(scriptsDir, 'start.sh'),newFname);
+            stopScript(path.join(scriptsDir, 'stop.sh'),newFname);
+            deleteScript(path.join(scriptsDir, 'delete.sh'),newFname);
+            updateScript(path.join(scriptsDir, 'update.sh'));
+            renameScript(path.join(scriptsDir, 'rename.sh'),newFname);
             
             site.DNSId = dnsResult.id;
             site.SiteDNS = dnsResult.name;
