@@ -3,6 +3,14 @@ const { triggerScript } = require("../config/VM_Trigger");
 const { deleteDns, createDns } = require("./CloudflareController");
 const path = require("path");
 const fs = require("fs");
+const {
+    createScript,
+    startScript,
+    stopScript,
+    deleteScript,
+    updateScript,
+    renameScript,
+  } = require("./ScriptController");
 
 module.exports.StopSite = async function StopSite(req, res) {
     try {
