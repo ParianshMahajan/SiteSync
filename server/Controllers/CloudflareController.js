@@ -37,3 +37,18 @@ module.exports.deleteDns = async function deleteDns(id) {
 }    
 
 
+module.exports.isRecordExists = async function isRecordExists(fname) {
+    const checkUrl = `${url}?name=${fname}.${process.env.domain}`;
+    const response = await axios.get(checkUrl, { headers: headers });
+    if (response.status === 200) {
+        const records = response.data.result;
+        if (records && records.length > 0) {
+            return true; // Record with the name already exists
+        } else {
+            return false; // No record with the name exists
+        }
+    } else {
+        console.error("Failed to check DNS records:", response.data.errors);
+        throw new Error("Failed to check DNS records");
+    }
+};

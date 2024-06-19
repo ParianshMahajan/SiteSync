@@ -1,7 +1,6 @@
 const jwt=require('jsonwebtoken');
 const FrontendModel = require('../Models/FrontendModel');
-const ADMIN_USERNAME=process.env.ADMIN_USERNAME;
-const ADMIN_PASSWORD=process.env.ADMIN_PASSWORD;
+const AdminModel = require('../Models/AdminModel');
 const Secret_key=process.env.Secret_key;
 
 
@@ -13,7 +12,7 @@ module.exports.verifyLogIn = async function verifyLogIn(req, res) {
       });
       
     } catch (error) {
-      res.json({
+      res.status(500).json({
         message: error.message,
         status: false,
       });
@@ -26,25 +25,35 @@ module.exports.verifyLogIn = async function verifyLogIn(req, res) {
 module.exports.createJWT=async(req,res)=>{
     try {
         let data=req.body;
-        if(data.UserName===ADMIN_USERNAME && data.Password===ADMIN_PASSWORD){
-            
-            let payload={
-                UserName:ADMIN_USERNAME,
-                Password:ADMIN_PASSWORD,
+        console.log(data);
+        if(data.username){
+            let user=await AdminModel.findOne({username:data.username});
+            if(user){
+                if(user.password===data.password){
+                    let payload={
+                        username:data.username,
+                        password:data.password
+                    }
+                    let token=jwt.sign(payload,Secret_key);
+                    res.json({
+                        access:token,
+                        status:true
+                    });
+                }
+                else{
+                    throw new Error("Invalid Password");
+                }
             }
-
-            let token=jwt.sign(payload,Secret_key);
-
-            res.json({
-                token:token,
-                status:true
-            });
+            else{
+                throw new Error("User does not exists.");
+            }
         }
         else{
             throw new Error("Invalid Credentials");
         }
-    } catch (error) {
-        res.json({
+    } 
+    catch (error) {
+        res.status(500).json({
             message:error.message,
             status:false
         })
@@ -52,9 +61,41 @@ module.exports.createJWT=async(req,res)=>{
 };
 
 
-module.exports.AllSites=async(req,res)=>{
+
+module.exports.updatePassword = async function updatePasswrord(req, res) {
     try {
-        let sites=await FrontendModel.find();
+        let data=req.body;
+        let admin=await AdminModel.findOne({username:req.user.username});
+        admin.password=data.password;
+        await admin.save();
+        let payload={
+            username:admin.username,
+            password:admin.password
+        }
+        let token=jwt.sign(payload,Secret_key);
+        res.json({
+            status:true,
+            message:"Password Updated",
+            access:token
+        });
+    } catch (error) {
+      res.status(500).json({
+        message: error.message,
+        status: false,
+      });
+    }
+  };
+  
+
+
+
+
+
+
+module.exports.SearchSite=async(req,res)=>{
+    try {
+        let qeury=req.body.query;
+        let sites=await FrontendModel.find({$or:[{fname:{$regex:new RegExp(qeury,'i')}}]});
 
         res.json({
             status:true,
@@ -62,7 +103,7 @@ module.exports.AllSites=async(req,res)=>{
         });
         
     } catch (error) {
-        res.json({
+        res.status(500).json({
             message:error.message,
             status:false
         })
@@ -70,24 +111,46 @@ module.exports.AllSites=async(req,res)=>{
 }
 
 
-module.exports.isAvailable=async(req,res)=>{
+module.exports.AllSites=async(req,res)=>{
     try {
-        let site=await FrontendModel.findOne({fname:req.body.Name});
 
-        if(site){
-            throw new Error("Site is not Available");
+        const page = req.body.page || 1;
+        const pageSize = req.body.pageSize;
+
+        const skip = (page - 1) * pageSize;
+
+        let filters=req.body.filters;
+
+
+
+
+        let sites,totalCount;
+        if(filters.isRunning){
+            totalCount=await FrontendModel.countDocuments({Status:1});
+            sites=await FrontendModel.find({Status:1}).skip(skip).limit(pageSize);
+        }
+        else if(filters.isStopped){
+            totalCount=await FrontendModel.countDocuments({Status:0});
+            sites=await FrontendModel.find({Status:0}).skip(skip).limit(pageSize);
         }
         else{
-            res.json({
-                status:true,
-                message:"Site is Available"
-            });
+            totalCount=await FrontendModel.countDocuments();
+            sites=await FrontendModel.find().skip(skip).limit(pageSize);
         }
-            
-    } catch (error) {
+
+        let totalPages=Math.ceil(totalCount / pageSize);
+
         res.json({
+            status:true,
+            sites:sites,
+            totalPages:totalPages,
+        });
+        
+    } catch (error) {
+        res.status(500).json({
             message:error.message,
             status:false
         })
     }
 }
+

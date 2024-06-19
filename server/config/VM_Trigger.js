@@ -7,12 +7,14 @@ const connSettings = {
   password: process.env.VMPassword
 };
 
-const conn = new Client();
-
-module.exports.triggerScript = async (fname, status) => {
+module.exports.triggerScript = (fname, status, newFname) => {
   return new Promise((resolve, reject) => {
-    try {
+    const conn = new Client();
+
+    conn.on('ready', () => {
       let sc = "";
+      let scriptArgs = ""; // Initialize script arguments variable
+
       if (status === 20) {
         sc = "create.sh";
       } else if (status === 0) {
@@ -23,43 +25,46 @@ module.exports.triggerScript = async (fname, status) => {
         sc = "delete.sh";
       } else if (status === 40) {
         sc = "update.sh";
+      } else if (status === 100) {
+        sc = "rename.sh";
+        scriptArgs = ` ${fname} ${newFname}`;
       } else {
-        reject(new Error("Invalid status code"));
-        return;
+        conn.end();
+        return reject(new Error("Invalid status code"));
       }
 
-      const scriptPath = `${process.env.VMPath}/${fname}/${sc}`;
-      conn.on('ready', () => {
-        console.log('SSH Connection Established');
+      console.log(sc);
 
-        // Modified exec command to use sudo with -S option
-        conn.exec(`echo ${process.env.VMPassword} | sudo -S bash ${scriptPath}`, (err, stream) => {
-          if (err) {
-            reject(err);
-            return;
-          }
+      const scriptPath = `${process.env.VMPath}/${fname}/scripts/${sc}`;
 
-          stream.on('close', (code, signal) => {
-            console.log(`Script execution ended with code ${code}`);
-            conn.end();
+      // Execute script on established SSH connection
+      conn.exec(`echo ${process.env.VMPassword} | sudo -S bash ${scriptPath}${scriptArgs}`, (err, stream) => {
+        if (err) {
+          conn.end();
+          return reject(err);
+        }
+
+        stream.on('close', (code, signal) => {
+          console.log(`Script execution ended with code ${code}`);
+          conn.end();
+          if (code === 0) {
             resolve(true);
-          }).on('data', (data) => {
-            console.log(`STDOUT: ${data}`);
-          }).stderr.on('data', (data) => {
-            console.error(`STDERR: ${data}`);
-            reject(new Error(data.toString()));
-          });
+          } else {
+            reject(new Error(`Script ended with non-zero exit code: ${code}`));
+          }
+        }).on('data', (data) => {
+          console.log(`STDOUT: ${data}`);
+        }).stderr.on('data', (data) => {
+          console.error(`STDERR: ${data}`);
         });
       });
+    });
 
-      conn.on('error', (err) => {
-        reject(err);
-      });
-      
-      conn.connect(connSettings);
+    conn.on('error', (err) => {
+      console.error('SSH Connection Error:', err);
+      reject(err);
+    });
 
-    } catch (error) {
-      reject(error);
-    }
+    conn.connect(connSettings);
   });
 };

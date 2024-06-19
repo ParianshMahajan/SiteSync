@@ -1,15 +1,19 @@
-const fs = require('fs');
-const path = require('path');
-const { exec } = require('child_process');
+const fs = require("fs");
+const path = require("path");
+const { exec } = require("child_process");
 
-module.exports.createScript = async function createScript(fpath,fname,domain,framework) {
-    
-    let redirects="\\$uri \\$uri/ =404"
-    if(framework==true){
-        redirects="\\$uri \\$uri/ /index.html"
-    }
+module.exports.createScript = async function createScript(
+  fpath,
+  fname,
+  domain,
+  framework
+) {
+  let redirects = "\\$uri \\$uri/ =404";
+  if (framework == true) {
+    redirects = "\\$uri \\$uri/ /index.html";
+  }
 
-    let content = `
+  let content = `
     #!/bin/bash
 
     # Server block configuration template
@@ -59,26 +63,29 @@ module.exports.createScript = async function createScript(fpath,fname,domain,fra
     fi
     `;
 
-    fs.writeFileSync(fpath, content);
+  try {
+    fs.writeFileSync(fpath, content, { mode: 0o755 });
     console.log("Script created successfully");
-}
+  } catch (err) {
+    console.error("Error writing script file:", err);
+  }
+};
 
-
-
-module.exports.startScript = async function startScript(fpath,fname) {
-    let content = `
+module.exports.startScript = async function startScript(fpath, fname) {
+  let content = `
     #!/bin/bash
 
     file_pathfname="/etc/nginx/sites-enabled/${fname}"
 
-    # Comment out the line starting with 'server_name'
-    sudo sed -i '/^\s*server_name/s/^/#/' "$file_path"
+    # Uncomment the lines starting with '#server_name' and '#root'
+    sudo sed -i '/^\\s*#\\s*server_name/s/^\\s*#\\s*//' "$file_pathfname"
+    sudo sed -i '/^\\s*#\\s*root/s/^\\s*#\\s*//' "$file_pathfname"
 
     echo "Server name line commented out successfully."
 
     # Check if the file was created successfully
     if [ $? -ne 0 ]; then
-        echo "Error commenting file."
+        echo "Error unCommenting lines."
         exit 1
     fi
 
@@ -94,27 +101,29 @@ module.exports.startScript = async function startScript(fpath,fname) {
     fi
     `;
 
-    fs.writeFileSync(fpath, content);
-
+  try {
+    fs.writeFileSync(fpath, content, { mode: 0o755 });
     console.log("Script created successfully");
-}
+  } catch (err) {
+    console.error("Error writing script file:", err);
+  }
+};
 
-
-
-module.exports.stopScript = async function stopScript(fpath,fname) {
-    let content = `
+module.exports.stopScript = async function stopScript(fpath, fname) {
+  let content = `
     #!/bin/bash
 
     file_pathfname="/etc/nginx/sites-enabled/${fname}"
 
-    # Comment out the line starting with 'server_name'
-    sudo sed -i '/^\s*#*\s*server_name/s/^#*//' "$file_path"
+    # Comment out the lines starting with 'server_name' and 'root'
+    sudo sed -i '/^\\s*server_name/s/^/#/' "$file_pathfname"
+    sudo sed -i '/^\\s*root/s/^/#/' "$file_pathfname"
 
-    echo "Server name line uncommented successfully."
+    echo "Server name line commented successfully."
 
-    # Check if the file was created successfully
+    # Check if the lines are commented successfully
     if [ $? -ne 0 ]; then
-        echo "Error commenting file."
+        echo "Error commenting lines."
         exit 1
     fi
 
@@ -130,13 +139,16 @@ module.exports.stopScript = async function stopScript(fpath,fname) {
     fi
     `;
 
-    fs.writeFileSync(fpath, content);
-
+  try {
+    fs.writeFileSync(fpath, content, { mode: 0o755 });
     console.log("Script created successfully");
-}
+  } catch (err) {
+    console.error("Error writing script file:", err);
+  }
+};
 
-module.exports.deleteScript = async function deleteScript(fpath,fname) {
-    let content = `
+module.exports.deleteScript = async function deleteScript(fpath, fname) {
+  let content = `
     #!/bin/bash
 
     sudo rm /etc/nginx/sites-enabled/${fname}
@@ -161,15 +173,16 @@ module.exports.deleteScript = async function deleteScript(fpath,fname) {
     fi
     `;
 
-    fs.writeFileSync(fpath, content);
-
+  try {
+    fs.writeFileSync(fpath, content, { mode: 0o755 });
     console.log("Script created successfully");
-}
-
-
+  } catch (err) {
+    console.error("Error writing script file:", err);
+  }
+};
 
 module.exports.updateScript = async function updateScript(fpath) {
-    let content = `
+  let content = `
     #!/bin/bash
 
     # Reload Nginx
@@ -184,7 +197,71 @@ module.exports.updateScript = async function updateScript(fpath) {
     fi
     `;
 
-    fs.writeFileSync(fpath, content);
-
+  try {
+    fs.writeFileSync(fpath, content, { mode: 0o755 });
     console.log("Script created successfully");
-}
+  } catch (err) {
+    console.error("Error writing script file:", err);
+  }
+};
+
+module.exports.renameScript = async function renameScript(fpath) {
+    let content = `
+      #!/bin/bash
+  
+      oldFname=\$1
+      newFname=\$2
+      
+      old_conf_path="/etc/nginx/sites-enabled/\$oldFname"
+      new_conf_path="/etc/nginx/sites-enabled/\$newFname"
+      scripts_path="${process.env.VMPath}/\${oldFname}/scripts"
+      
+      # Rename the configuration file
+      if [ -f "\$old_conf_path" ]; then
+          sudo mv "\$old_conf_path" "\$new_conf_path"
+      
+          # Check if renaming was successful
+          if [ $? -ne 0 ]; then
+              echo "Error renaming conf file."
+              exit 1
+          fi
+      
+          echo "Configuration file renamed successfully."
+      else
+          echo "Old configuration file does not exist."
+          exit 1
+      fi
+      
+      # Update server_name and root in the new configuration file
+      sudo sed -i "s/server_name .*;/server_name \${newFname}.pariansh.tech;/g" "\$new_conf_path"
+      sudo sed -i "s|root .*;|root /home/paria/frontend/\${newFname};|g" "\$new_conf_path"
+      
+      # Check if the sed commands were successful
+      if [ $? -ne 0 ]; then
+          echo "Error updating configuration file."
+          exit 1
+      fi
+      
+      echo "Configuration file updated successfully."
+      
+      
+      # Reload Nginx
+      echo "Reloading Nginx..."
+      sudo service nginx reload
+      
+      # Check if Nginx reload was successful
+      if [ $? -eq 0 ]; then
+          echo "Nginx reloaded successfully!"
+      else
+          echo "Error reloading Nginx."
+      fi
+      
+      `;
+
+  try {
+    fs.writeFileSync(fpath, content, { mode: 0o755 });
+    console.log("Script created successfully");
+  } catch (err) {
+    console.error("Error writing script file:", err);
+  }
+};
