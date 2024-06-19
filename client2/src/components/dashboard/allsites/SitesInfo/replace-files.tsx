@@ -65,7 +65,7 @@ export default function ReplaceFiles({ site }: SiteInfoProps): React.JSX.Element
   };
 
   const onError = (error: AxiosError<ErrorResponse>): void => {
-    setErr(error.message)
+    setErr(error.response?.data.message || error.message);
   };
   const { mutate: reDeploySite, isPending } = useReplaceFiles({ onSuccess, onError });
 

@@ -95,7 +95,7 @@ export default function SiteForm(): React.JSX.Element {
   };
 
   const onError = (error: AxiosError<ErrorResponse>): void => {
-    setDispError({ ...dispError, deploy: error.message });
+    setDispError({ ...dispError, deploy: error.response?.data.message || error.message});
   };
   const { mutate: deploySite, isPending } = useUpload({ onSuccess, onError });
 

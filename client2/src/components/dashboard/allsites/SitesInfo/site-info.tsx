@@ -28,6 +28,7 @@ export default function SiteInfo({ site,refreshComponents }: SiteInfoProps): Rea
   const [fname, setFname] = React.useState('');
   const [siteNameErr, setSiteNameErr] = React.useState(false);
 
+
   const onSuccessSiteAvailable = async (): Promise<void> => {
     setSiteNameErr(false);
   };
@@ -66,7 +67,7 @@ export default function SiteInfo({ site,refreshComponents }: SiteInfoProps): Rea
   };
 
   const onErrorRenameSite = (error: AxiosError<ErrorResponse>): void => {
-    setErr(error.message);
+    setErr(error.response?.data?.message || error.message);
   };
   const { mutate: RenameSite, isPending: isRenameSite } = useRenameSite({
     onSuccess: onSuccessRenameSite,
