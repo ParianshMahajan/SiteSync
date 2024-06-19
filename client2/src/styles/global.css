@@ -20,9 +20,9 @@
   --icon-fontSize-lg: 1.5rem;
 }
 
-*:focus-visible {
+/* *:focus-visible {
   outline: 2px solid var(--mui-palette-primary-main);
-}
+} */
 
 html {
   height: 100%;

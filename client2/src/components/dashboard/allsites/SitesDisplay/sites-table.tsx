@@ -75,10 +75,10 @@ export default function SitesTable({ sites, filters, setSite,setSites,searchResu
   }
 
   return (
-    <Box sx={{ mt: 2}}>
-      <Table sx={{minHeight:"40vh"}} >
-        <TableHead>
-          <TableRow>
+    <Box sx={{ mt: 3,height:"87%"}}>
+      <Table sx={{minHeight:"45vh",borderRadius:"10px",border: '5px solid #202427',}} >
+        <TableHead sx={{borderRadius:"10px"}}>
+          <TableRow sx={{borderRadius:"10px"}} >
             <TableCell sx={{ width: '65%' }}>
               <Typography variant="h5">SiteName</Typography>
             </TableCell>
@@ -127,7 +127,8 @@ export default function SitesTable({ sites, filters, setSite,setSites,searchResu
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="body1">{site.Status === 0 ? 'Down' : 'Running'}</Typography>
+                  <Typography variant="body1" fontWeight={600}
+              color={site.Status === 0 ? 'var(--mui-palette-error-dark)' : 'var(--mui-palette-primary-dark)'}>{site.Status === 0 ? 'Down' : 'Running'}</Typography>
                 </TableCell>
               </TableRow>
             );
@@ -136,7 +137,7 @@ export default function SitesTable({ sites, filters, setSite,setSites,searchResu
         )}
       </Table>
 
-        <Box sx={{mt:2, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        <Box sx={{mt:6, display: 'flex', alignItems: 'center', justifyContent: 'center',bottom:0}}>
 
               <Pagination count={pagination.totalPages} onChange={handleChangePage} variant="outlined" color="primary" />
 

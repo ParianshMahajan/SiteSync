@@ -1,5 +1,6 @@
 import type { AxiosResponse } from "axios";
 import { uploadApi } from "./api";
+import { authClient } from "@/lib/auth/client";
 
 interface UploadStatus {
     status:boolean;
@@ -27,15 +28,15 @@ interface SiteAvailableData{
 }
 
 export const uploadFileStatus = async ({formData,setUploadProgress,totalSize}:UploadFileData): Promise<UploadResponseStatus> => {
-    // const token = (await authClient.getToken()).data;
+    const token = (await authClient.getToken()).data;
   
-    // if (token === null || token === undefined) {
-    //   throw new Error('You must be logged in to perform this action');
-    // }
+    if (token === null || token === undefined) {
+      throw new Error('You must be logged in to perform this action');
+    }
     const res = await uploadApi.post('/', formData,{
       headers: {
         "Content-Type": "multipart/form-data",
-        // Authorization: 'Bearer 123',
+        Authorization: `Bearer ${token}`,
       },
       onUploadProgress: (progressEvent) => {
         const progress = (progressEvent.loaded / totalSize) * 100;
@@ -46,29 +47,33 @@ export const uploadFileStatus = async ({formData,setUploadProgress,totalSize}:Up
 };
 
 export const siteAvailableStatus = async ({name}:SiteAvailableData): Promise<UploadResponseStatus> => {
-    // const token = (await authClient.getToken()).data;
+    const token = (await authClient.getToken()).data;
   
-    // if (token === null || token === undefined) {
-    //   throw new Error('You must be logged in to perform this action');
-    // }
+    if (token === null || token === undefined) {
+      throw new Error('You must be logged in to perform this action');
+    }
     const data = {
         Name: name
     };
-    const res = await uploadApi.post('isavailable/',data);
+    const res = await uploadApi.post('isavailable/',data,{
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return res;
 };
 
 
 export const replaceFile = async ({formData,setUploadProgress,totalSize}:UploadFileData): Promise<UploadResponseStatus> => {
-    // const token = (await authClient.getToken()).data;
+    const token = (await authClient.getToken()).data;
   
-    // if (token === null || token === undefined) {
-    //   throw new Error('You must be logged in to perform this action');
-    // }
+    if (token === null || token === undefined) {
+      throw new Error('You must be logged in to perform this action');
+    }
     const res = await uploadApi.post('replace/', formData,{
       headers: {
         "Content-Type": "multipart/form-data",
-        // Authorization: 'Bearer 123',
+        Authorization: `Bearer ${token}`,
       },
       onUploadProgress: (progressEvent) => {
         const progress = (progressEvent.loaded / totalSize) * 100;

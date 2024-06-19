@@ -16,7 +16,7 @@ export default function Filter({ title, IsSelect, disabled, setSelect }: CheckPr
   }
 
   return (
-    <Paper elevation={10} >
+    <Paper elevation={0} >
       <Button
         variant={IsSelect ?'contained':"outlined"}
         sx={{transition:"ease-in-out 150ms",width:"100%",display:"flex",justifyContent:"flex-start",alignItems:"center",px:"10px",py:"8px",gap:"7px"}}

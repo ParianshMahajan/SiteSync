@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import { useRouter } from 'next/navigation';
 import type { ErrorResponse } from '@/services/auth';
 import type { Site } from '@/services/manage-sites';
 import { LoadingButton } from '@mui/lab';
@@ -15,6 +14,7 @@ import ReplaceFiles from './replace-files';
 
 interface SiteInfoProps {
   site: Site | undefined;
+  refreshComponents: () => void;
 }
 
 const ensureUrlScheme = (url: string): string => {
@@ -24,7 +24,7 @@ const ensureUrlScheme = (url: string): string => {
   return url;
 };
 
-export default function SiteInfo({ site }: SiteInfoProps): React.JSX.Element {
+export default function SiteInfo({ site,refreshComponents }: SiteInfoProps): React.JSX.Element {
   const [fname, setFname] = React.useState('');
   const [siteNameErr, setSiteNameErr] = React.useState(false);
 
@@ -46,7 +46,6 @@ export default function SiteInfo({ site }: SiteInfoProps): React.JSX.Element {
     siteCheck({ name });
   };
 
-  const router = useRouter();
   const [status, setStatus] = React.useState(0);
   const [success, setSuccess] = React.useState('');
   const [err, setErr] = React.useState('');
@@ -63,6 +62,7 @@ export default function SiteInfo({ site }: SiteInfoProps): React.JSX.Element {
 
   const onSuccessRenameSite = async (): Promise<void> => {
     setSuccess('Site Renamed Successfully');
+    refreshComponents();
   };
 
   const onErrorRenameSite = (error: AxiosError<ErrorResponse>): void => {
@@ -84,23 +84,23 @@ export default function SiteInfo({ site }: SiteInfoProps): React.JSX.Element {
     else if (status === 0) action = 'Downed';
     else action = 'Deleted';
     setSuccess(`Site ${action} Successfully`);
-    router.refresh();
+    refreshComponents();
   };
 
   const onErrorUpdateSite = (error: AxiosError<ErrorResponse>): void => {
-    setErr(error.message);
+    setErr(String(error.response?.data?.message) || error.message);
   };
   const { mutate: UpdateSite, isPending: isUpdateSite } = useUpdateSite({
     onSuccess: onSuccessUpdateSite,
     onError: onErrorUpdateSite,
   });
 
-  const handleUpdateSite = (stat: number): void => {
-    UpdateSite({ id: site?._id, stat });
+  const handleUpdateSite = (stat:number): void => {
+    UpdateSite({ id: site?._id, status:stat });
   };
 
   return (
-    <Paper sx={{ p: 2, width: { xs: 1, md: '40%' }, minHeight: '62vh' }} elevation={10}>
+    <Paper sx={{ p: 2, width: { xs: 1, md: '40%' }, minHeight: '62vh' }} elevation={0}>
       {!site ? (
         <>
           <Typography variant="h4">Site Info</Typography>
@@ -119,8 +119,9 @@ export default function SiteInfo({ site }: SiteInfoProps): React.JSX.Element {
               </Link>
             </Typography>
             <Typography
-              variant="body1"
-              color={site.Status === 0 ? 'var(--mui-palette-error-dark)' : 'var(--mui-palette-success-dark)'}
+              variant="h6"
+              fontWeight={700}
+              color={site.Status === 0 ? 'var(--mui-palette-error-dark)' : 'var(--mui-palette-primary-main)'}
             >
               {site.Status === 0 ? 'Down' : 'Running'}
             </Typography>
@@ -160,8 +161,8 @@ export default function SiteInfo({ site }: SiteInfoProps): React.JSX.Element {
                 variant="contained"
                 loading={isUpdateSite ? status === 1 : false}
                 onClick={() => {
-                  setStatus(1);
                   handleUpdateSite(1);
+                  setStatus(1);
                 }}
               >
                 Start Site
@@ -171,8 +172,8 @@ export default function SiteInfo({ site }: SiteInfoProps): React.JSX.Element {
                 variant="contained"
                 loading={isUpdateSite ? status === 0 : false}
                 onClick={() => {
-                  setStatus(0);
                   handleUpdateSite(0);
+                  setStatus(0);
                 }}
               >
                 Down Site
@@ -182,13 +183,14 @@ export default function SiteInfo({ site }: SiteInfoProps): React.JSX.Element {
             <LoadingButton
               variant="contained"
               sx={{
-                background: 'var(--mui-palette-error-main)',
-                '&:hover': { background: 'var(--mui-palette-error-dark)' },
+                background: '#ff0000',
+                color:"#ffffff",
+                '&:hover': { background: '#520000' },
               }}
               loading={isUpdateSite ? status === -1 : false}
               onClick={() => {
-                setStatus(-1);
                 handleUpdateSite(-1);
+                setStatus(-1);
               }}
             >
               Delete Site

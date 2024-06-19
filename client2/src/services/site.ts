@@ -1,5 +1,6 @@
 import type { AxiosResponse } from "axios";
 import { siteApi } from "./api";
+import { authClient } from "@/lib/auth/client";
 
 interface SiteStatus {
     id:string;
@@ -17,11 +18,11 @@ export interface SuccessResponse{
 
 
 export const updateSite = async ({id,status}:SiteStatus): Promise<SiteResponseStatus> => {
-    // const token = (await authClient.getToken()).data;
+    const token = (await authClient.getToken()).data;
   
-    // if (token === null || token === undefined) {
-    //   throw new Error('You must be logged in to perform this action');
-    // }
+    if (token === null || token === undefined) {
+      throw new Error('You must be logged in to perform this action');
+    }
     const data = {
         id,
     };
@@ -37,18 +38,19 @@ export const updateSite = async ({id,status}:SiteStatus): Promise<SiteResponseSt
 
     const res = await siteApi.post(backLink, data,{
       headers: {
-        // Authorization: 'Bearer 123',
+        Authorization: `Bearer ${token}`,
       },
     });
     return res;
 };
 
 export const renameSite = async ({id,fname}:SiteStatus): Promise<SiteResponseStatus> => {
-    // const token = (await authClient.getToken()).data;
+    const token = (await authClient.getToken()).data;
   
-    // if (token === null || token === undefined) {
-    //   throw new Error('You must be logged in to perform this action');
-    // }
+    if (token === null || token === undefined) {
+      throw new Error('You must be logged in to perform this action');
+    }
+
     const data = {
         id,
         fname,
@@ -57,7 +59,7 @@ export const renameSite = async ({id,fname}:SiteStatus): Promise<SiteResponseSta
 
     const res = await siteApi.post('rename/', data,{
       headers: {
-        // Authorization: 'Bearer 123',
+        Authorization: `Bearer ${token}`,
       },
     });
     return res;

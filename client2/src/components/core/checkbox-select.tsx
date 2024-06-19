@@ -16,7 +16,7 @@ export default function CheckboxSelect({ title, IsSelect, disabled, setSelect }:
   }
 
   return (
-    <Paper elevation={10} >
+    <Paper elevation={0} >
       <Button
         variant={IsSelect ?'contained':"outlined"}
         sx={{transition:"ease-in-out 150ms",width:"100%",display:"flex",justifyContent:"flex-start",alignItems:"center",px:"14px",py:1,gap:"10px"}}

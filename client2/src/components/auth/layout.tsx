@@ -1,68 +1,47 @@
 import * as React from 'react';
-import RouterLink from 'next/link';
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-
-import { paths } from '@/paths';
-import { DynamicLogo } from '@/components/core/logo';
+import Particles from './particle-bg/Particles';
+import { Typography } from '@mui/material';
 
 export interface LayoutProps {
   children: React.ReactNode;
 }
 
 export function Layout({ children }: LayoutProps): React.JSX.Element {
+  const url="/assets/CCS_LOGO.png";
+
   return (
+    <>
+    <Particles />
     <Box
       sx={{
-        display: { xs: 'flex', lg: 'grid' },
-        flexDirection: 'column',
-        gridTemplateColumns: '1fr 1fr',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-evenly',
+        flexDirection: { xs: 'column', lg: 'row' },
         minHeight: '100%',
+        position: 'relative',
+        zIndex: 300,
       }}
     >
-      <Box sx={{ display: 'flex', flex: '1 1 auto', flexDirection: 'column' }}>
-        <Box sx={{ p: 3 }}>
-          <Box component={RouterLink} href={paths.home} sx={{ display: 'inline-block', fontSize: 0 }}>
-            <DynamicLogo colorDark="light" colorLight="dark" height={32} width={122} />
-          </Box>
-        </Box>
-        <Box sx={{ alignItems: 'center', display: 'flex', flex: '1 1 auto', justifyContent: 'center', p: 3 }}>
-          <Box sx={{ maxWidth: '450px', width: '100%' }}>{children}</Box>
-        </Box>
+
+
+      <Box sx={{width:{xs:"100%",md:"40%"}, zIndex:23,display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column"}}>
+        <Box alt="logo" component="img" src={url} width="70%" />
+        <Typography variant="h1" fontWeight={500} sx={{mt:4,fontSize:{xs:"50px",lg:"80px"}}} letterSpacing={4} color="#5B5B5D">SITE SYNC</Typography>
       </Box>
-      <Box
-        sx={{
-          alignItems: 'center',
-          background: 'radial-gradient(50% 50% at 50% 50%, #122647 0%, #090E23 100%)',
-          color: 'var(--mui-palette-common-white)',
-          display: { xs: 'none', lg: 'flex' },
-          justifyContent: 'center',
-          p: 3,
-        }}
-      >
-        <Stack spacing={3}>
-          <Stack spacing={1}>
-            <Typography color="inherit" sx={{ fontSize: '24px', lineHeight: '32px', textAlign: 'center' }} variant="h1">
-              Welcome to{' '}
-              <Box component="span" sx={{ color: '#15b79e' }}>
-                Devias Kit
-              </Box>
-            </Typography>
-            <Typography align="center" variant="subtitle1">
-              A professional template that comes with ready-to-use MUI components.
-            </Typography>
-          </Stack>
-          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-            <Box
-              component="img"
-              alt="Widgets"
-              src="/assets/auth-widgets.png"
-              sx={{ height: 'auto', width: '100%', maxWidth: '600px' }}
-            />
-          </Box>
-        </Stack>
+
+
+
+
+      <Box width="20%" >
+        {children}
       </Box>
+
+
+
+
     </Box>
+    </>
   );
 }

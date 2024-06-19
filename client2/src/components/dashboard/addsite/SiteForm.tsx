@@ -196,13 +196,11 @@ export default function SiteForm(): React.JSX.Element {
                 <LinearProgress sx={{ mt: '2px', width: '85%' }} variant="determinate" value={uploadProgress} />
               </Box>
             )}
-            {success ? (
               <Typography variant="body1" sx={{ mt: 3,ml:1 }}>
                 <Link href={ensureUrlScheme(siteName)} target="_blank" >
                   {siteName}
                 </Link>
               </Typography>
-            ) : null}
           </Disabled>
         </form>
       </Paper>

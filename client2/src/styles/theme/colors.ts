@@ -97,3 +97,46 @@ export const stormGrey = {
   900: '#212636',
   950: '#121621',
 } satisfies PaletteRange;
+
+export const customWhite = {
+  50: '#f9fafb',   // Very light white
+  100: '#f1f1f4',  // Light white
+  200: '#e6e8ec',  // Very pale white
+  300: '#dcdfe4',  // Pale white
+  400: '#cfd3db',  // Soft white
+  500: '#bfc4ce',  // Subtle white
+  600: '#a6adb8',  // Gentle white
+  700: '#8d97a2',  // Mild white
+  800: '#707c88',  // Medium white
+  900: '#565e73',  // Dark white
+  950: '#313749',  // Very dark white
+} satisfies PaletteRange;
+
+export const NeonGreen = {
+  50: '#e0ffeb',   // Very light neon green
+  100: '#b3ffd7',  // Light neon green
+  200: '#80ffc0',  // Pale neon green
+  300: '#4dffa8',  // Bright neon green
+  400: '#1aff91',  // Vivid neon green
+  500: '#00e676',  // Pure neon green
+  600: '#00b05b',  // Medium neon green
+  700: '#00803f',  // Dark neon green
+  800: '#004c26',  // Very dark neon green
+  900: '#00200e',  // Almost black neon green
+  950: '#001005',  // Deep black neon green
+} satisfies PaletteRange;
+
+export const ElectricLime = {
+  50: '#f5ffe6',   // Very light electric lime
+  100: '#ebffcc',  // Light electric lime
+  200: '#d4ff99',  // Pale electric lime
+  300: '#baff66',  // Bright electric lime
+  400: '#a0ff33',  // Vivid electric lime
+  500: '#80ff00',  // Pure electric lime
+  600: '#66cc00',  // Medium electric lime
+  700: '#4d9900',  // Dark electric lime
+  800: '#336600',  // Very dark electric lime
+  900: '#1a3300',  // Almost black electric lime
+  950: '#0d1900',  // Deep black electric lime
+} satisfies PaletteRange;
+

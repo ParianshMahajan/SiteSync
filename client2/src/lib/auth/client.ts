@@ -1,6 +1,9 @@
 'use client';
 
+import { type ErrorResponse,type  TokenResponse, login, verify} from '@/services/auth';
 import type { User } from '@/types/user';
+import type { AxiosError, AxiosResponse } from 'axios';
+import { logger } from '../default-logger';
 
 function generateToken(): string {
   const arr = new Uint8Array(12);
@@ -9,11 +12,11 @@ function generateToken(): string {
 }
 
 const user = {
-  id: 'USR-000',
-  avatar: '/assets/avatar.png',
-  firstName: 'Sofia',
-  lastName: 'Rivers',
-  email: 'sofia@devias.io',
+  id: 'Admin-CCS',
+  avatar: '/assets/ccs-bulb.png',
+  firstName: 'Admin',
+  lastName: 'CCS',
+  email: 'ccs@thapar.edu',
 } satisfies User;
 
 export interface SignUpParams {
@@ -23,12 +26,9 @@ export interface SignUpParams {
   password: string;
 }
 
-export interface SignInWithOAuthParams {
-  provider: 'google' | 'discord';
-}
 
 export interface SignInWithPasswordParams {
-  email: string;
+  username: string;
   password: string;
 }
 
@@ -47,26 +47,32 @@ class AuthClient {
     return {};
   }
 
-  async signInWithOAuth(_: SignInWithOAuthParams): Promise<{ error?: string }> {
-    return { error: 'Social authentication not implemented' };
-  }
 
   async signInWithPassword(params: SignInWithPasswordParams): Promise<{ error?: string }> {
-    const { email, password } = params;
+    const { username, password } = params;
+    let token: string | null;
+    try {
+      const response = await login({ username, password });
+      const successResponse = response as AxiosResponse<TokenResponse>;
+      token = successResponse?.data?.access;
+      logger.debug('signInWithPassword', response);
+    } catch (err) {
+      const axiosError = err as AxiosError<ErrorResponse>;
+      logger.error('signInWithPassword', axiosError);
 
-    // Make API request
-
-    // We do not handle the API, so we'll check if the credentials match with the hardcoded ones.
-    if (email !== 'sofia@devias.io' || password !== 'Secret1') {
-      return { error: 'Invalid credentials' };
+      if (axiosError?.response?.data?.detail) {
+        return { error: axiosError?.response?.data?.message };
+      }
+      return { error: 'An error occurred' };
     }
 
-    const token = generateToken();
     localStorage.setItem('custom-auth-token', token);
-
     return {};
   }
 
+
+
+  
   async resetPassword(_: ResetPasswordParams): Promise<{ error?: string }> {
     return { error: 'Password reset not implemented' };
   }
@@ -76,17 +82,32 @@ class AuthClient {
   }
 
   async getUser(): Promise<{ data?: User | null; error?: string }> {
-    // Make API request
-
-    // We do not handle the API, so just check if we have a token in localStorage.
+    try{
+      const response = await verify();
+      const successResponse = response;
+      logger.debug('signInWithPassword', response);
+      if(successResponse?.data?.status){
+        return { data: user };
+      }
+    }
+    catch(err){
+      return { data: null };
+    }
     const token = localStorage.getItem('custom-auth-token');
 
     if (!token) {
       return { data: null };
     }
 
-    return { data: user };
+    return { data: null };
   }
+
+  async getToken(): Promise<{ data?: string | null }> {
+    const token = localStorage.getItem('custom-auth-token');
+
+    return { data: token };
+  }
+
 
   async signOut(): Promise<{ error?: string }> {
     localStorage.removeItem('custom-auth-token');

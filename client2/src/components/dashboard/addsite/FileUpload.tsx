@@ -96,7 +96,7 @@ export default function FileUpload({ files, setFiles, height }: FileUploadProps)
               height,
               cursor: 'pointer',
               px: 6,
-              backgroundColor: dragging ? '#e7e7e7' : '#f9f9f9',
+              backgroundColor: dragging ? 'var(--mui-palette-neutral-950)' : 'var(--mui-palette-background-paper)',
               transition: 'background-color 0.3s',
             }}
             onDragEnter={handleDragEnter}

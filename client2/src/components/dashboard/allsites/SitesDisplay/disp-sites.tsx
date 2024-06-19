@@ -20,7 +20,7 @@ export default function DisplaySites({setSite}:DisplaySitesProps): React.JSX.Ele
     });
 
   return (
-    <Paper sx={{p:2,width:{ xs:1, md: '60%' }}} elevation={10} >
+    <Paper sx={{p:2,width:{ xs:1, md: '60%' }}} elevation={0} >
         <SearchSite setSites={setSites} setSearchResults={setSearchResults} filters={filters} setFilters={setFilters} />  
         <SitesTable sites={sites} filters={filters} searchResults={searchResults} setSites={setSites} setSite={setSite} />
     </Paper>
