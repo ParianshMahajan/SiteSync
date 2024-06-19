@@ -7,24 +7,14 @@ const connSettings = {
   password: process.env.VMPassword
 };
 
-const conn = new Client();
-
-// Establish SSH connection
-conn.on('ready', () => {
-  console.log('SSH Connection Established');
-});
-
-conn.on('error', (err) => {
-  console.error('SSH Connection Error:', err);
-});
-
-conn.connect(connSettings);
-
 module.exports.triggerScript = (fname, status, newFname) => {
   return new Promise((resolve, reject) => {
-    try {
+    const conn = new Client();
+
+    conn.on('ready', () => {
       let sc = "";
       let scriptArgs = ""; // Initialize script arguments variable
+
       if (status === 20) {
         sc = "create.sh";
       } else if (status === 0) {
@@ -39,21 +29,24 @@ module.exports.triggerScript = (fname, status, newFname) => {
         sc = "rename.sh";
         scriptArgs = ` ${fname} ${newFname}`;
       } else {
+        conn.end();
         return reject(new Error("Invalid status code"));
       }
 
       console.log(sc);
 
       const scriptPath = `${process.env.VMPath}/${fname}/scripts/${sc}`;
-      
+
       // Execute script on established SSH connection
       conn.exec(`echo ${process.env.VMPassword} | sudo -S bash ${scriptPath}${scriptArgs}`, (err, stream) => {
         if (err) {
+          conn.end();
           return reject(err);
         }
 
         stream.on('close', (code, signal) => {
           console.log(`Script execution ended with code ${code}`);
+          conn.end();
           if (code === 0) {
             resolve(true);
           } else {
@@ -65,9 +58,13 @@ module.exports.triggerScript = (fname, status, newFname) => {
           console.error(`STDERR: ${data}`);
         });
       });
-    } catch (error) {
-      console.log(error.message);
-      reject(error);
-    }
+    });
+
+    conn.on('error', (err) => {
+      console.error('SSH Connection Error:', err);
+      reject(err);
+    });
+
+    conn.connect(connSettings);
   });
 };
