@@ -1,6 +1,6 @@
 const express = require('express');
-const { StopSite, StartSite, DeleteSite, RenameSite } = require('../Controllers/SiteContoller');
 const { isAdmin } = require('../Middlewares/AdminProtect');
+const { accessRepos } = require('../Controllers/GitController');
 
 const GitRouter = express.Router();
 
@@ -8,7 +8,7 @@ const GitRouter = express.Router();
 
 GitRouter
 .route('/repos')
-.post(isAdmin,StopSite)
+.post(isAdmin,accessRepos)
 
 
 

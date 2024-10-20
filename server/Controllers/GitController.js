@@ -62,8 +62,9 @@ module.exports.accessRepos = async function accessRepos(req, res) {
 module.exports.deployGitUrl = async function deployGitUrl(req, res) {
     try {
 
-        const { name,git_url, branch} = req.body;
+        const { name, git_url, branch} = req.body;
         const token=await AdminModel.findOne({username:req.user.username}).select('gitToken');
+
 
         let path=`${process.env.CurrPath}/Scripts/GitClone.sh`;
         let implementPath=`${process.env.UserPath}${process.env.Hybrid}`;
@@ -83,7 +84,7 @@ module.exports.deployGitUrl = async function deployGitUrl(req, res) {
             // Adding dockerfiles and docker-compose files 
             path=`${process.env.CurrPath}/Scripts/PortDockerUp.sh`;
             
-            implementPath=`${process.env.UserPath}${process.env.Hybrid}/${subDir}`;
+            implementPath=`${process.env.UserPath}${process.env.Hybrid}/${name}/${subDir}`;
             
             args=`${implementPath} ${token} ${dockerfile} ${dockercompose} ${envname} ${env}`;
             scriptResult = await triggerScript(path,args);
