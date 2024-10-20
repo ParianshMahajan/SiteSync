@@ -69,9 +69,9 @@ module.exports.deployGitUrl = async function deployGitUrl(req, res) {
         const token=await AdminModel.findOne({username:'CCSisAdmin'}).select('gitToken');
 
 
-        let path=`${process.env.CurrPath}/Scripts/GitClone.sh`;
+        let path=`${process.env.CurrPath}Scripts/GitClone.sh`;
         let implementPath=`${process.env.UserPath}${process.env.Hybrid}`;
-        let args=`${implementPath} ${git_url} ${token} ${branch}`;
+        let args=` ${implementPath} ${git_url} ${token} ${branch}`;
 
         let scriptResult = await triggerScript(path,args);
         if (scriptResult === false) {
@@ -85,11 +85,11 @@ module.exports.deployGitUrl = async function deployGitUrl(req, res) {
             const { port , subDir , subDom , envname, env , dockerfile , dockercompose } = req.body.backend;
     
             // Adding dockerfiles and docker-compose files 
-            path=`${process.env.CurrPath}/Scripts/PortDockerUp.sh`;
+            path=`${process.env.CurrPath}Scripts/PortDockerUp.sh`;
             
-            implementPath=`${process.env.UserPath}${process.env.Hybrid}/${name}/${subDir}`;
+            implementPath=`${process.env.UserPath}${process.env.Hybrid}${name}/${subDir}`;
             
-            args=`${implementPath} ${token} ${dockerfile} ${dockercompose} ${envname} ${env}`;
+            args=` ${implementPath} ${token} ${dockerfile} ${dockercompose} ${envname} ${env}`;
             scriptResult = await triggerScript(path,args);
             if (scriptResult === false) {
                 throw new Error("Script Execution Failed");
@@ -105,8 +105,8 @@ module.exports.deployGitUrl = async function deployGitUrl(req, res) {
             
             
             // creating nginx conf
-            path=`${process.env.CurrPath}/Scripts/NginxConf.sh`;
-            args=`${port} ${dnsResult.name}`;        
+            path=`${process.env.CurrPath}Scripts/NginxConf.sh`;
+            args=` ${port} ${dnsResult.name}`;        
             
             scriptResult = await triggerScript(path,args);
             if (scriptResult === false) {
