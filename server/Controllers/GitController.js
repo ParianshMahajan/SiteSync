@@ -64,7 +64,8 @@ module.exports.deployGitUrl = async function deployGitUrl(req, res) {
     try {
 
         const { name, git_url, branch} = req.body;
-        const token=await AdminModel.findOne({username:req.user.username}).select('gitToken');
+        // const token=await AdminModel.findOne({username:req.user.username}).select('gitToken');
+        const token=await AdminModel.findOne({username:'CCSisAdmin'}).select('gitToken');
 
 
         let path=`${process.env.CurrPath}/Scripts/GitClone.sh`;
