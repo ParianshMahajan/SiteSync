@@ -8,11 +8,11 @@ const GitRouter = express.Router();
 
 GitRouter
 .route('/repos')
-.post(isAdmin,accessRepos)
+.post(accessRepos)
 
 GitRouter
 .route('/deploy')
-.post(isAdmin,deployGitUrl)
+.post(deployGitUrl)
 
 GitRouter
 .route('/test')
