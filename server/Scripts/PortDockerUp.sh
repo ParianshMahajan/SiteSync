@@ -3,37 +3,25 @@
 # Arguments:
 # $1 -> Directory path where the files will be created
 # $2 -> Access token for git
-# $3 -> Dockerfile content (string)
-# $4 -> Docker Compose content (string)
+# $3 -> Dockerfile content (string with escaped newlines)
+# $4 -> Docker Compose content (string with escaped newlines)
 # $5 -> .env filename (optional, default: ".env" if empty)
-# $6 -> Env content (string)
+# $6 -> Env content (string with escaped newlines)
 
-# Set defaults if necessary (if envname is empty, default to .env)
-ENVNAME=${5:-}
+# Set defaults if necessary
+ENVNAME=${5:-.env}
 
 # Navigate to the specified directory
 cd "$1" || { echo "Directory not found"; exit 1; }
 
-# Ensure Dockerfile content is written correctly
-cat <<EOF > Dockerfile
-$3
-EOF
+# Create Dockerfile
+echo -e "${3//\\n/$'\n'}" > Dockerfile
 
-# Ensure docker-compose.yml content is written correctly
-cat <<EOF > docker-compose.yml
-$4
-EOF
+# Create docker-compose.yml
+echo -e "${4//\\n/$'\n'}" > docker-compose.yml
 
 # Create environment file (.env or custom envname.env)
-if [ -z "$ENVNAME" ]; then
-    cat <<EOF > .env
-$6
-EOF
-else
-    cat <<EOF > "$ENVNAME".env
-$6
-EOF
-fi
+echo -e "${6//\\n/$'\n'}" > "$ENVNAME"
 
 # Run Docker commands
 sudo docker compose up --build -d
