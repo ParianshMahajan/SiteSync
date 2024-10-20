@@ -73,7 +73,6 @@ module.exports.deployGitUrl = async function deployGitUrl(req, res) {
         let implementPath=`${process.env.UserPath}${process.env.Hybrid}`;
         let args=` ${implementPath} ${git_url} ${token.gitToken} ${branch}`;
 
-        console.log(path, args);
 
         let scriptResult = await triggerScript(path,args);
         if (scriptResult === false) {
@@ -92,6 +91,10 @@ module.exports.deployGitUrl = async function deployGitUrl(req, res) {
             implementPath=`${process.env.UserPath}${process.env.Hybrid}${name}/${subDir}`;
             
             args=` ${implementPath} ${token.gitToken} ${dockerfile} ${dockercompose} ${envname} ${env}`;
+
+            console.log(path, args);
+
+
             scriptResult = await triggerScript(path,args);
             if (scriptResult === false) {
                 throw new Error("Script Execution Failed");
