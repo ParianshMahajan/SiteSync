@@ -12,11 +12,15 @@ const {
     renameScript,
   } = require("./ScriptController");
 
+
+const scriptPath = `${process.env.UserPath}${process.env.frontend}${fname}/scripts/`;
+
+
 module.exports.StopSite = async function StopSite(req, res) {
     try {
         let site = await FrontendModel.findById(req.body.id);
         if(site.Status == 1){
-            const scriptResult = await triggerScript(site.fname, 0);
+            const scriptResult = await triggerScript(`${scriptPath}stop.sh`);
             if (scriptResult === false) {
                 throw new Error("Script Execution Failed");
             }
@@ -45,7 +49,7 @@ module.exports.StartSite = async function StartSite(req, res) {
     try {
         let site = await FrontendModel.findById(req.body.id);
         if(site.Status == 0){
-            const scriptResult = await triggerScript(site.fname, 1);
+            const scriptResult = await triggerScript(`${scriptPath}start.sh`);
             if (scriptResult === false) {
                 throw new Error("Script Execution Failed");
             }
@@ -76,7 +80,7 @@ module.exports.DeleteSite = async function DeleteSite(req, res) {
     try {
         let site = await FrontendModel.findById(req.body.id);
         if(await deleteDns(site.DNSId)){
-            const scriptResult = await triggerScript(site.fname, -1);
+            const scriptResult = await triggerScript(`${scriptPath}delete.sh`);
             if (scriptResult === false) {
                 throw new Error("Script Execution Failed");
             }
@@ -115,7 +119,8 @@ module.exports.RenameSite = async function RenameSite(req, res) {
 
             
             
-            const scriptResult = await triggerScript(site.fname, 100, newFname);
+            const scriptResult = await triggerScript(`${scriptPath}rename.sh`, `${site.fname} ${newFname}`);
+
             if (scriptResult === false) {
                 throw new Error("Script Execution Failed");
             }

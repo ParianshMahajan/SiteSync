@@ -4,6 +4,7 @@ const { isAdmin } = require('../Middlewares/AdminProtect');
 
 const SiteRouter = express.Router();
 
+// static
 
 SiteRouter
 .route('/stop')
@@ -20,6 +21,7 @@ SiteRouter
 SiteRouter
 .route('/rename')
 .post(isAdmin,RenameSite)
+
 
 
 

@@ -1,5 +1,5 @@
 const express = require('express');
-const { createJWT, AllSites, verifyLogIn, SearchSite, updatePassword } = require('../Controllers/AdminController');
+const { createJWT, AllSites, verifyLogIn, SearchSite, updatePassword, test } = require('../Controllers/AdminController');
 const { isAdmin } = require('../Middlewares/AdminProtect');
 
 const AdminRouter = express.Router();
@@ -32,6 +32,10 @@ AdminRouter
 AdminRouter
 .route('/sites')
 .post(isAdmin,AllSites)
+
+AdminRouter
+.route('/test')
+.get(test)
 
 
 

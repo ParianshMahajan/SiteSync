@@ -9,6 +9,9 @@ const AdminSchema=new Schema({
     password:{
         type:String
     },
+    gitToken:{
+        type:String
+    }
 })
 
 module.exports=mongoose.model("admins",AdminSchema);

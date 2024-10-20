@@ -13,7 +13,6 @@ module.exports.isAdmin = async (req, res, next) => {
                 let user=await AdminModel.findOne({username:payload.username});
                 if(user){
                     if(user.password===payload.password){
-                        console.log(user);
                         req.user=user;
                         next();
                     }

@@ -120,6 +120,7 @@ module.exports.AllSites=async(req,res)=>{
         const skip = (page - 1) * pageSize;
 
         let filters=req.body.filters;
+        
 
 
 
@@ -154,3 +155,27 @@ module.exports.AllSites=async(req,res)=>{
     }
 }
 
+
+
+
+
+const { checkPortAvailability } = require('../config/VM_Trigger');
+
+module.exports.test = async function test(req, res) {
+  try {
+     
+      const resp=await checkPortAvailability(4484);
+      console.log(resp);    
+      
+      res.json({
+        status: true,
+      });
+
+  } catch (error) {
+    // Handle any unexpected errors
+    res.status(500).json({
+      status: false,
+      message: error.message
+    });
+  }
+};

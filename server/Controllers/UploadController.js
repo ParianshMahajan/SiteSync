@@ -20,6 +20,8 @@ const { createDns, isRecordExists } = require("./CloudflareController");
 
 const uploadDir = path.join(__dirname, "../uploads");
 
+
+
 module.exports.UploadZip = async (req, res, next) => {
   try {
     if (!req.file) {
@@ -42,7 +44,6 @@ module.exports.ProcessZip = async (req, res) => {
 
     //Creating dns
     let dnsResult=await createDns(fname);
-    console.log(dnsResult);
     if(dnsResult==false){
       throw new Error('DNS Creation Failed');
     }
@@ -77,7 +78,7 @@ module.exports.ProcessZip = async (req, res) => {
     }
     
     let site=await FrontendModel.create(siteData);
-    const scriptResult = await triggerScript(site.fname, 20);
+    const scriptResult = await triggerScript(path.join(scriptsDir, 'create.sh'));
     if (scriptResult === false) {
         throw new Error("Script Execution Failed");
     }
@@ -129,7 +130,7 @@ module.exports.ReplaceZip = async (req, res) => {
 
 
     
-    const scriptResult = await triggerScript(site.fname, 40);
+    const scriptResult = await triggerScript(path.join(scriptsDir, 'update.sh'));
     if (scriptResult === false) {
         throw new Error("Script Execution Failed");
     }
