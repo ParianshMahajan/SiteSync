@@ -1,3 +1,4 @@
+const { triggerScript } = require("../config/VM_Trigger");
 const AdminModel = require("../Models/AdminModel");
 const { createDns } = require("./CloudflareController");
 const axios = require('axios');
