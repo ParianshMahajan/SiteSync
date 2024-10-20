@@ -73,6 +73,8 @@ module.exports.deployGitUrl = async function deployGitUrl(req, res) {
         let implementPath=`${process.env.UserPath}${process.env.Hybrid}`;
         let args=` ${implementPath} ${git_url} ${token} ${branch}`;
 
+        console.log(path, args);
+
         let scriptResult = await triggerScript(path,args);
         if (scriptResult === false) {
             throw new Error("Script Execution Failed");
