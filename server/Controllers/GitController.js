@@ -71,7 +71,7 @@ module.exports.deployGitUrl = async function deployGitUrl(req, res) {
 
         let path=`${process.env.CurrPath}Scripts/GitClone.sh`;
         let implementPath=`${process.env.UserPath}${process.env.Hybrid}`;
-        let args=` ${implementPath} ${git_url} ${token} ${branch}`;
+        let args=` ${implementPath} ${git_url} ${token.gitToken} ${branch}`;
 
         console.log(path, args);
 
@@ -91,7 +91,7 @@ module.exports.deployGitUrl = async function deployGitUrl(req, res) {
             
             implementPath=`${process.env.UserPath}${process.env.Hybrid}${name}/${subDir}`;
             
-            args=` ${implementPath} ${token} ${dockerfile} ${dockercompose} ${envname} ${env}`;
+            args=` ${implementPath} ${token.gitToken} ${dockerfile} ${dockercompose} ${envname} ${env}`;
             scriptResult = await triggerScript(path,args);
             if (scriptResult === false) {
                 throw new Error("Script Execution Failed");
