@@ -7,7 +7,5 @@ services:
       context: .
       dockerfile: ./Dockerfile
     ports:
-      - "2123:2123"
-    volumes:
-      - "/home/paria/frontend:/app/uploads"
+      - "4686:4686"
     restart: always
