@@ -15,18 +15,18 @@ ENVNAME=${5:-.env}
 cd "$1" || { echo "Directory not found"; exit 1; }
 
 # Create Dockerfile
-echo -e "${3//\\n/$'\n'}" > Dockerfile
+echo -e "${3//\\n/$'\n'}" > Dockerfile || { echo "Failed to create Dockerfile"; exit 1; }
 
 # Create docker-compose.yml
-echo -e "${4//\\n/$'\n'}" > docker-compose.yml
+echo -e "${4//\\n/$'\n'}" > docker-compose.yml || { echo "Failed to create docker-compose.yml"; exit 1; }
 
 # Create environment file (.env or custom envname.env)
-echo -e "${6//\\n/$'\n'}" > "$ENVNAME"
+echo -e "${6//\\n/$'\n'}" > "$ENVNAME" || { echo "Failed to create environment file"; exit 1; }
 
 # Run Docker commands
-sudo docker compose up --build -d
+sudo docker compose up --build -d || { echo "Docker command failed"; exit 1; }
 
 # Git operations
 git add .
-git commit -m "Added Docker and environment files"
-git push https://"$2"@github.com/$(git remote get-url origin | cut -d'/' -f4-)
+git commit -m "Added Docker and environment files" || { echo "Git commit failed"; exit 1; }
+git push https://"$2"@github.com/$(git remote get-url origin | cut -d'/' -f4-) || { echo "Git push failed"; exit 1; }
