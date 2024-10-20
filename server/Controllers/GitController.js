@@ -14,9 +14,9 @@ module.exports.accessRepos = async function accessRepos(req, res) {
             }
         });
 
-
+        console.log(response.data);
         let token = response.data.access_token;
-        
+        console.log(token);
         let admin= await AdminModel.findOne({username:req.user.username});
         admin.gitToken=token;
         await admin.save();
