@@ -74,10 +74,10 @@ module.exports.deployGitUrl = async function deployGitUrl(req, res) {
         let args=` ${implementPath} ${git_url} ${token.gitToken} ${branch}`;
 
 
-        let scriptResult = await triggerScript(path,args);
-        if (scriptResult === false) {
-            throw new Error("Script Execution Failed");
-        }
+        // let scriptResult = await triggerScript(path,args);
+        // if (scriptResult === false) {
+        //     throw new Error("Script Execution Failed");
+        // }
 
 
 
@@ -104,10 +104,10 @@ module.exports.deployGitUrl = async function deployGitUrl(req, res) {
             console.log(path, args);
 
 
-            scriptResult = await triggerScript(path,args);
-            if (scriptResult === false) {
-                throw new Error("Script Execution Failed");
-            }
+            // scriptResult = await triggerScript(path,args);
+            // if (scriptResult === false) {
+            //     throw new Error("Script Execution Failed");
+            // }
 
             
             // creating dns
@@ -115,6 +115,7 @@ module.exports.deployGitUrl = async function deployGitUrl(req, res) {
             if(dnsResult==false){
               throw new Error('DNS Creation Failed');
             }
+            console.log(dnsResult);
             
             
             
@@ -122,10 +123,10 @@ module.exports.deployGitUrl = async function deployGitUrl(req, res) {
             path=`${process.env.CurrPath}Scripts/NginxConf.sh`;
             args=` ${port} ${dnsResult.name}`;        
             
-            scriptResult = await triggerScript(path,args);
-            if (scriptResult === false) {
-                throw new Error("Script Execution Failed");
-            }
+            // scriptResult = await triggerScript(path,args);
+            // if (scriptResult === false) {
+            //     throw new Error("Script Execution Failed");
+            // }
             
         }
 
