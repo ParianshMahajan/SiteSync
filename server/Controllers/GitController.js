@@ -87,8 +87,8 @@ module.exports.deployGitUrl = async function deployGitUrl(req, res) {
 
             function convertMultilineToSingleLine(multilineString) {
                 return multilineString
-                    .replace(/\n/g, "\\n")
-                    .replace(/'/g, "\\'");
+                    .replace(/\n/g, "\\n")  
+                    .replace(/'/g, "'\\''"); 
             }
             
 
