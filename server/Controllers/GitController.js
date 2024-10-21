@@ -83,14 +83,23 @@ module.exports.deployGitUrl = async function deployGitUrl(req, res) {
 
         if(req.body.backend.mode){
 
-            const { port , subDir , subDom , envname, env , dockerfile , dockercompose } = req.body.backend;
-    
+            let { port , subDir , subDom , envname, env , dockerfile , dockercompose } = req.body.backend;
+
+            function convertMultilineToSingleLine(multilineString) {
+                return multilineString
+                    .replace(/\n/g, "\\n")
+                    .replace(/'/g, "\\'");
+            }
+            
+
+            dockerfile = convertMultilineToSingleLine(dockerfile);
+            dockercompose = convertMultilineToSingleLine(dockercompose);
+            env = convertMultilineToSingleLine(env);
+
             // Adding dockerfiles and docker-compose files 
             path=`${process.env.CurrPath}Scripts/PortDockerUp.sh`;
-            
             implementPath=`${process.env.UserPath}${process.env.Hybrid}${name}/${subDir}`;
-            
-            args = ` ${implementPath} ${token.gitToken} '${dockerfile.replace(/\n/g, "\\n")}' '${dockercompose.replace(/\n/g, "\\n")}' '${envname}' '${env.replace(/\n/g, "\\n")}'`;
+            args = ` ${implementPath} ${token.gitToken} '${dockerfile}' '${dockercompose}' '${envname}' '${env}'`;
 
             console.log(path, args);
 
