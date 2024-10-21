@@ -9,7 +9,6 @@
 # $6 -> Env content (string with escaped newlines)
 
 # Set defaults if necessary
-ENVNAME=${5:-.env}
 
 # Check if directory exists, if not, exit with error
 if [ ! -d "$1" ]; then
@@ -40,7 +39,7 @@ create_file "Dockerfile" "$3"
 create_file "docker-compose.yml" "$4"
 
 # Create environment file (.env or custom envname.env)
-create_file "$ENVNAME" "$6"
+create_file "$5" "$6"
 
 # Run Docker commands
 if sudo docker compose up --build -d; then
