@@ -101,7 +101,7 @@ module.exports.deployGitUrl = async function deployGitUrl(req, res) {
             
             // creating nginx conf
             const path=`${process.env.CurrPath}Scripts/server/NginxConf.sh`;
-            const args=` ${port} ${dnsResult.name}`;        
+            const args=` ${port} ${dnsResult.name} ${subDom}api`;        
             
             const scriptResult = await triggerScript(path,args);
             if (scriptResult === false) {

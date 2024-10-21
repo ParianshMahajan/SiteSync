@@ -3,18 +3,20 @@
 # Arguments:
 # $1 -> Port number
 # $2 -> Domain name
+# $3 -> Configuration name
 
 # Check if the correct number of arguments is passed
-if [ "$#" -ne 2 ]; then
-    echo "Usage: $0 <port> <domain>"
+if [ "$#" -ne 3 ]; then
+    echo "Usage: $0 <port> <domain> <confname>"
     exit 1
 fi
 
 PORT=$1
 DOMAIN=$2
+CONFNAME=$3
 
-# Create the Nginx server block
-NGINX_CONF="/etc/nginx/sites-available/$DOMAIN"
+# Create the Nginx server block with the provided configuration name
+NGINX_CONF="/etc/nginx/sites-available/$CONFNAME"
 
 sudo bash -c "cat > $NGINX_CONF" <<EOL
 server {
@@ -35,7 +37,7 @@ server {
 EOL
 
 # Enable the server block by creating a symlink
-sudo ln -s /etc/nginx/sites-available/$DOMAIN /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/$CONFNAME /etc/nginx/sites-enabled/
 
 # Test the Nginx configuration for errors
 sudo nginx -t
@@ -43,4 +45,4 @@ sudo nginx -t
 # Reload Nginx to apply the changes
 sudo service nginx restart
 
-echo "Nginx server block for $DOMAIN on port $PORT created and enabled."
+echo "Nginx server block for $DOMAIN on port $PORT with configuration $CONFNAME created and enabled."
