@@ -111,10 +111,10 @@ module.exports.deployGitUrl = async function deployGitUrl(req, res) {
 
             
             // creating dns
-            // let dnsResult=await createDns(subDom);
-            // if(dnsResult==false){
-            //   throw new Error('DNS Creation Failed');
-            // }
+            let dnsResult=await createDns(subDom);
+            if(dnsResult==false){
+              throw new Error('DNS Creation Failed');
+            }
             
             
             
