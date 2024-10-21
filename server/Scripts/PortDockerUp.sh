@@ -11,22 +11,58 @@
 # Set defaults if necessary
 ENVNAME=${5:-.env}
 
+# Check if directory exists, if not, exit with error
+if [ ! -d "$1" ]; then
+    echo "Directory not found: $1"
+    exit 1
+fi
+
 # Navigate to the specified directory
-cd "$1" || { echo "Directory not found"; exit 1; }
+cd "$1" || { echo "Failed to navigate to directory: $1"; exit 1; }
+
+# Function to create a file with the given content
+create_file() {
+    local file_name=$1
+    local file_content=$2
+
+    if echo -e "${file_content//\\n/$'\n'}" > "$file_name"; then
+        echo "$file_name created successfully."
+    else
+        echo "Failed to create $file_name."
+        exit 1
+    fi
+}
 
 # Create Dockerfile
-echo -e "${3//\\n/$'\n'}" > Dockerfile || { echo "Failed to create Dockerfile"; exit 1; }
+create_file "Dockerfile" "$3"
 
 # Create docker-compose.yml
-echo -e "${4//\\n/$'\n'}" > docker-compose.yml || { echo "Failed to create docker-compose.yml"; exit 1; }
+create_file "docker-compose.yml" "$4"
 
 # Create environment file (.env or custom envname.env)
-echo -e "${6//\\n/$'\n'}" > "$ENVNAME" || { echo "Failed to create environment file"; exit 1; }
+create_file "$ENVNAME" "$6"
 
 # Run Docker commands
-sudo docker compose up --build -d || { echo "Docker command failed"; exit 1; }
+if sudo docker compose up --build -d; then
+    echo "Docker containers started successfully."
+else
+    echo "Docker command failed."
+    exit 1
+fi
 
 # Git operations
-git add .
-git commit -m "Added Docker and environment files" || { echo "Git commit failed"; exit 1; }
-git push https://"$2"@github.com/$(git remote get-url origin | cut -d'/' -f4-) || { echo "Git push failed"; exit 1; }
+git add . || { echo "Git add failed"; exit 1; }
+
+if git commit -m "Added Docker and environment files"; then
+    echo "Git commit successful."
+else
+    echo "Git commit failed."
+    exit 1
+fi
+
+if git push https://"$2"@github.com/$(git remote get-url origin | cut -d'/' -f4-); then
+    echo "Git push successful."
+else
+    echo "Git push failed."
+    exit 1
+fi
