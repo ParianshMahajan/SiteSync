@@ -83,7 +83,7 @@ module.exports.deployGitUrl = async function deployGitUrl(req, res) {
 
         if(req.body.backend.mode){
 
-            const { port , subDir , subDom , envname, env , dockerfile , dockercompose } = req.body.backend;
+            let { port , subDir , subDom , envname, env , dockerfile , dockercompose } = req.body.backend;
             
             dockerfile=dockerfile.replace(/\n/g, "\\n");
         	dockercompose=dockercompose.replace(/\n/g, "\\n") 
