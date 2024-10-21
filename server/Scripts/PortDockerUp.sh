@@ -29,7 +29,7 @@ convertEscapedToMultiline() {
 # Function to create a file with the given content
 create_file() {
     local file_name=$1
-    local file_content=$2
+    local file_content="$2"
     local formatted_content=$(convertEscapedToMultiline "$file_content")
 
     if echo -e "$formatted_content" > "$file_name"; then
@@ -43,8 +43,13 @@ create_file() {
 # Create Dockerfile
 create_file "Dockerfile" "$3"
 
-# Create docker-compose.yml
-create_file "docker-compose.yml" "$4"
+# Create docker-compose.yml with correct indentation
+docker_compose_content=$(convertEscapedToMultiline "$4")
+
+# Fix indentation for docker-compose.yml
+docker_compose_formatted=$(echo "$docker_compose_content" | awk 'NF { print "  " $0 }')
+
+create_file "docker-compose.yml" "$docker_compose_formatted"
 
 # Create environment file (.env or custom envname.env)
 create_file "$env_file_name" "$6"
