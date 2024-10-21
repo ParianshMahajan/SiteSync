@@ -17,7 +17,7 @@ module.exports.triggerScript = (scriptPath, scriptArgs) => {
     conn.on("ready", () => {
       // Execute script on established SSH connection
       conn.exec(
-        `echo ${process.env.VMPassword} | sudo -S bash ${scriptPath}${scriptArgs}`,
+        `echo ${process.env.VMPassword} | sudo -S bash ${scriptPath} ${scriptArgs}`,
         (err, stream) => {
           if (err) {
             conn.end();
