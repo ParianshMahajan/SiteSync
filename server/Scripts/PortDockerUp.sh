@@ -22,9 +22,9 @@ cd "$1" || { echo "Failed to navigate to directory: $1"; exit 1; }
 
 # Function to convert escaped sequences into a multiline string
 convertEscapedToMultiline() {
-      local single_line_string="$1"
+    local escaped_string="$1"
     # Replace escaped newlines with actual newlines
-    echo -e "${single_line_string//\\n/$'\n'}"
+    echo -e "${escaped_string//\\n/$'\n'}"
 }
 
 # Function to create a file with the given content
