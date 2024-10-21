@@ -23,6 +23,7 @@ const SiteRouter = require('./Routers/SiteRouter.js');
 const AdminRouter = require('./Routers/AdminRouter.js');
 const { streamContainerLogs } = require('./config/VM_Trigger.js');
 const GitRouter = require('./Routers/GitRouter.js');
+const HybridRouter = require('./Routers/HybridRouter.js');
 
 streamContainerLogs(io);
 
@@ -38,6 +39,7 @@ server.listen(port, () => {
 function startRoutes(){
   app.use('/upload',UploadRouter);
   app.use('/site',SiteRouter);
+  app.use('/hybrid',HybridRouter);
   app.use('/git',GitRouter);
   app.use('/',AdminRouter);
 }

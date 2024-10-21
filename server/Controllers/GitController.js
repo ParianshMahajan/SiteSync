@@ -61,90 +61,92 @@ module.exports.accessRepos = async function accessRepos(req, res) {
 }
 
 
-module.exports.deployGitUrl = async function deployGitUrl(req, res) {
-    try {
-
-        const { name, git_url, branch} = req.body;
-        // const token=await AdminModel.findOne({username:req.user.username}).select('gitToken');
-        const token=await AdminModel.findOne({username:'CCSisAdmin'}).select('gitToken');
 
 
-        let path=`${process.env.CurrPath}Scripts/GitClone.sh`;
-        let implementPath=`${process.env.UserPath}${process.env.Hybrid}`;
-        let args=` ${implementPath} ${git_url} ${token.gitToken} ${branch}`;
+// module.exports.deployGitUrl = async function deployGitUrl(req, res) {
+//     try {
+
+//         const { name, git_url, branch} = req.body;
+//         // const token=await AdminModel.findOne({username:req.user.username}).select('gitToken');
+//         const token=await AdminModel.findOne({username:'CCSisAdmin'}).select('gitToken');
 
 
-        // let scriptResult = await triggerScript(path,args);
-        // if (scriptResult === false) {
-        //     throw new Error("Script Execution Failed");
-        // }
+//         let path=`${process.env.CurrPath}Scripts/GitClone.sh`;
+//         let implementPath=`${process.env.UserPath}${process.env.Hybrid}`;
+//         let args=` ${implementPath} ${git_url} ${token.gitToken} ${branch}`;
+
+
+//         let scriptResult = await triggerScript(path,args);
+//         if (scriptResult === false) {
+//             throw new Error("Script Execution Failed");
+//         }
 
 
 
-        if(req.body.backend.mode){
+//         if(req.body.backend.mode){
 
-            let { port , subDir , subDom , envname, env , dockerfile , dockercompose } = req.body.backend;
+//             let { port , subDir , subDom , envname, env , dockerfile , dockercompose } = req.body.backend;
 
-            function convertMultilineToSingleLine(multilineString) {
-                return multilineString
-                    .replace(/\n/g, "\\n")  
-                    .replace(/'/g, "'\\''"); 
-            }
+//             function convertMultilineToSingleLine(multilineString) {
+//                 return multilineString
+//                     .replace(/\n/g, "\\n")  
+//                     .replace(/'/g, "'\\''"); 
+//             }
             
 
-            dockerfile = convertMultilineToSingleLine(dockerfile);
-            dockercompose = convertMultilineToSingleLine(dockercompose);
-            env = convertMultilineToSingleLine(env);
+//             dockerfile = convertMultilineToSingleLine(dockerfile);
+//             dockercompose = convertMultilineToSingleLine(dockercompose);
+//             env = convertMultilineToSingleLine(env);
 
-            // Adding dockerfiles and docker-compose files 
-            path=`${process.env.CurrPath}Scripts/PortDockerUp.sh`;
-            implementPath=`${process.env.UserPath}${process.env.Hybrid}${name}/${subDir}`;
-            args = ` ${implementPath} ${token.gitToken} '${dockerfile}' '${dockercompose}' '${envname}' '${env}'`;
+//             // Adding dockerfiles and docker-compose files 
+//             path=`${process.env.CurrPath}Scripts/server/PortDockerUp.sh`;
+//             implementPath=`${process.env.UserPath}${process.env.Hybrid}${name}/${subDir}`;
+//             args = ` ${implementPath} ${token.gitToken} '${dockerfile}' '${dockercompose}' '${envname}' '${env}'`;
 
-            console.log(path, args);
+//             console.log(path, args);
 
 
-            // scriptResult = await triggerScript(path,args);
-            // if (scriptResult === false) {
-            //     throw new Error("Script Execution Failed");
-            // }
+//             scriptResult = await triggerScript(path,args);
+//             if (scriptResult === false) {
+//                 throw new Error("Script Execution Failed");
+//             }
 
             
-            // creating dns
-            let dnsResult=await createDns(subDom);
-            if(dnsResult==false){
-              throw new Error('DNS Creation Failed');
-            }
+//             // creating dns
+//             let dnsResult=await createDns(subDom);
+//             if(dnsResult==false){
+//               throw new Error('DNS Creation Failed');
+//             }
             
             
             
-            // creating nginx conf
-            path=`${process.env.CurrPath}Scripts/NginxConf.sh`;
-            args=` ${port} ${dnsResult.name}`;        
+//             // creating nginx conf
+//             path=`${process.env.CurrPath}Scripts/server/NginxConf.sh`;
+//             args=` ${port} ${dnsResult.name}`;        
             
-            scriptResult = await triggerScript(path,args);
-            if (scriptResult === false) {
-                throw new Error("Script Execution Failed");
-            }
+//             scriptResult = await triggerScript(path,args);
+//             if (scriptResult === false) {
+//                 throw new Error("Script Execution Failed");
+//             }
             
-        }
+//         }
 
-        if(req.body.frontend.mode){
+//         if(req.body.frontend.mode){
 
-            const { subDir , subDom  } = req.body.frontend;
+//             const { subDir , subDom  } = req.body.frontend;
             
-        }
-``
-        res.status(200).json({
-            status: true,
-            message: "Site Deployed Successfully"
-        });
+//         }
+        
+//         res.status(200).json({
+//             status: true,
+//             message: "Site Deployed Successfully"
+//         });
 
-    } catch (error) {
-        console.error(error.message);
-        res.status(500).json({
-            status: false,
-            message: error.message
-        });
-    }
-}
+//     } catch (error) {
+//         console.error(error.message);
+//         res.status(500).json({
+//             status: false,
+//             message: error.message
+//         });
+//     }
+// }

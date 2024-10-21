@@ -20,12 +20,15 @@ fi
 # Navigate to the specified directory
 cd "$1" || { echo "Failed to navigate to directory: $1"; exit 1; }
 
+
+
 # Function to convert escaped sequences into a multiline string
 convertEscapedToMultiline() {
     local escaped_string="$1"
-    # Replace escaped newlines with actual newlines and preserve single quotes
     echo -e "$escaped_string" | sed -E "s/\\\\n/\\n/g" | sed "s/\\\'/'/g"
 }
+
+
 
 # Function to create a file with the given content
 create_file() {
@@ -41,16 +44,26 @@ create_file() {
     fi
 }
 
-# Create Dockerfile
-create_file "Dockerfile" "$3"
+# Create Dockerfile if content is provided
+if [ -n "$3" ]; then
+    create_file "Dockerfile" "$3"
+fi
 
-# Create docker-compose.yml
-create_file "docker-compose.yml" "$4"
+# Create docker-compose.yml if content is provided
+if [ -n "$4" ]; then
+    create_file "docker-compose.yml" "$4"
+fi
 
-# Create environment file (.env or custom envname.env)
-create_file "$env_file_name" "$6"
+# Create environment file (.env or custom envname.env) if content is provided
+if [ -n "$6" ]; then
+    create_file "$env_file_name" "$6"
+fi
 
-# Run Docker commands
+
+
+
+
+# Run Docker commands 
 if sudo docker compose up --build -d; then
     echo "Docker containers started successfully."
 else
@@ -58,19 +71,23 @@ else
     exit 1
 fi
 
-# Git operations
-git add . || { echo "Git add failed"; exit 1; }
 
-if git commit -m "Added Docker and environment files"; then
-    echo "Git commit successful."
-else
-    echo "Git commit failed."
-    exit 1
-fi
 
-if git push https://"$2"@github.com/$(git remote get-url origin | cut -d'/' -f4-); then
-    echo "Git push successful."
-else
-    echo "Git push failed."
-    exit 1
+# Git operations only if Dockerfile or docker-compose content was provided
+if [ -n "$3" ] || [ -n "$4" ]; then
+    git add . || { echo "Git add failed"; exit 1; }
+
+    if git commit -m "Added Docker and environment files"; then
+        echo "Git commit successful."
+    else
+        echo "Git commit failed."
+        exit 1
+    fi
+
+    if git push https://"$2"@github.com/$(git remote get-url origin | cut -d'/' -f4-); then
+        echo "Git push successful."
+    else
+        echo "Git push failed."
+        exit 1
+    fi
 fi
