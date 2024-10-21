@@ -111,11 +111,10 @@ module.exports.deployGitUrl = async function deployGitUrl(req, res) {
 
             
             // creating dns
-            let dnsResult=await createDns(subDom);
-            if(dnsResult==false){
-              throw new Error('DNS Creation Failed');
-            }
-            console.log(dnsResult);
+            // let dnsResult=await createDns(subDom);
+            // if(dnsResult==false){
+            //   throw new Error('DNS Creation Failed');
+            // }
             
             
             
@@ -123,10 +122,10 @@ module.exports.deployGitUrl = async function deployGitUrl(req, res) {
             path=`${process.env.CurrPath}Scripts/NginxConf.sh`;
             args=` ${port} ${dnsResult.name}`;        
             
-            // scriptResult = await triggerScript(path,args);
-            // if (scriptResult === false) {
-            //     throw new Error("Script Execution Failed");
-            // }
+            scriptResult = await triggerScript(path,args);
+            if (scriptResult === false) {
+                throw new Error("Script Execution Failed");
+            }
             
         }
 
