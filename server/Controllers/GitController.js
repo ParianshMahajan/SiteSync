@@ -83,16 +83,14 @@ module.exports.deployGitUrl = async function deployGitUrl(req, res) {
 
         if(req.body.backend.mode){
 
-            let { port , subDir , subDom , envname, env , dockerfile , dockercompose } = req.body.backend;
-            
-            dockerfile=dockerfile.replace(/\n/g, "\\n");
-        	dockercompose=dockercompose.replace(/\n/g, "\\n") 
-        	env=env.replace(/\n/g, "\\n");
-
+            const { port , subDir , subDom , envname, env , dockerfile , dockercompose } = req.body.backend;
+    
             // Adding dockerfiles and docker-compose files 
             path=`${process.env.CurrPath}Scripts/PortDockerUp.sh`;
+            
             implementPath=`${process.env.UserPath}${process.env.Hybrid}${name}/${subDir}`;
-            args=` ${implementPath} ${token.gitToken} ${dockerfile} ${dockercompose} ${envname} ${env}`;
+            
+            args = `${implementPath} ${token.gitToken} '${dockerfile.replace(/\n/g, "\\n")}' '${dockercompose.replace(/\n/g, "\\n")}' '${envname}' '${env.replace(/\n/g, "\\n")}'`;
 
             console.log(path, args);
 

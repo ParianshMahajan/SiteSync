@@ -9,6 +9,7 @@
 # $6 -> Env content (string with escaped newlines)
 
 # Set defaults if necessary
+env_file_name=${5:-".env"}
 
 # Check if directory exists, if not, exit with error
 if [ ! -d "$1" ]; then
@@ -19,12 +20,19 @@ fi
 # Navigate to the specified directory
 cd "$1" || { echo "Failed to navigate to directory: $1"; exit 1; }
 
+# Function to convert escaped sequences into a multiline string
+convertEscapedToMultiline() {
+    local str="$1"
+    echo "$str" | sed 's/\\n/\n/g' | sed 's/\\"/"/g' | sed 's/^[ \t]*//'
+}
+
 # Function to create a file with the given content
 create_file() {
     local file_name=$1
     local file_content=$2
+    local formatted_content=$(convertEscapedToMultiline "$file_content")
 
-    if echo -e "${file_content//\\n/$'\n'}" > "$file_name"; then
+    if echo -e "$formatted_content" > "$file_name"; then
         echo "$file_name created successfully."
     else
         echo "Failed to create $file_name."
@@ -39,7 +47,7 @@ create_file "Dockerfile" "$3"
 create_file "docker-compose.yml" "$4"
 
 # Create environment file (.env or custom envname.env)
-create_file "$5" "$6"
+create_file "$env_file_name" "$6"
 
 # Run Docker commands
 if sudo docker compose up --build -d; then
