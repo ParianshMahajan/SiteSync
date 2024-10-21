@@ -90,7 +90,7 @@ module.exports.deployGitUrl = async function deployGitUrl(req, res) {
             
             implementPath=`${process.env.UserPath}${process.env.Hybrid}${name}/${subDir}`;
             
-            args=` ${implementPath} ${token.gitToken} ${dockerfile} ${dockercompose} ${envname} ${env}`;
+            args=` ${implementPath} ${token.gitToken}  '${dockerfile.replace(/\n/g, "\\n")}' '${dockercompose.replace(/\n/g, "\\n")}' ${envname} '${env.replace(/\n/g, "\\n")}' `;
 
             console.log(path, args);
 
