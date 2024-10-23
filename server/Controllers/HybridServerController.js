@@ -59,6 +59,25 @@ async function addDockerFiles(dockerfile, dockercompose, envname, env, name, sub
 
 }
 
+async function DockerDown(port, confname){
+	try{
+		
+        const path=`${process.env.CurrPath}Scripts/server/ShutDown.sh`;
+        const args=` ${port} ${confname}`;
+
+        const scriptResult = await triggerScript(path,args);
+        if (scriptResult === false) {
+            throw new Error("Script Execution Failed");
+        }
+
+		return true;
+	} catch (error) {
+		console.error(error.message);
+		return false;
+	}
+
+}
+
 
 
 
@@ -101,7 +120,7 @@ module.exports.deployGitUrl = async function deployGitUrl(req, res) {
             
             // creating nginx conf
             const path=`${process.env.CurrPath}Scripts/server/NginxConf.sh`;
-            const args=` ${port} ${dnsResult.name} ${subDom}api`;        
+            const args=` ${port} ${dnsResult.name} ${subDom}-api`;        
             
             const scriptResult = await triggerScript(path,args);
             if (scriptResult === false) {
@@ -129,3 +148,32 @@ module.exports.deployGitUrl = async function deployGitUrl(req, res) {
         });
     }
 }
+
+
+
+module.exports.shutDown = async function shutDown(req, res) {
+    try {
+
+        const { port,confname} = req.body;
+
+        const downStatus = await DockerDown(port, confname);
+        if (downStatus === false) {
+            throw new Error("Site Down Failed");
+        }
+
+        res.status(200).json({
+            status: true,
+            message: "Site Down Successfully"
+        });
+
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({
+            status: false,
+            message: error.message
+        });
+    }
+}
+
+
+

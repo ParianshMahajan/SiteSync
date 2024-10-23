@@ -9,9 +9,9 @@ let headers = {
 
 module.exports.createDns = async function createDns(fname) {    
     let data = {
-        'type': "A",
+        'type': "CNAME",
         'name': fname,
-        'content': process.env.VMip,
+        'content': process.env.VMdomain,
         'proxied':true 
     }
     let response = await axios.post(url, data, { headers: headers });

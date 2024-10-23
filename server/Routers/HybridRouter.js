@@ -1,6 +1,6 @@
 const express = require('express');
 const { isAdmin } = require('../Middlewares/AdminProtect');
-const { deployGitUrl } = require('../Controllers/HybridServerController');
+const { deployGitUrl, shutDown } = require('../Controllers/HybridServerController');
 
 const HybridRouter = express.Router();
 
@@ -8,6 +8,10 @@ const HybridRouter = express.Router();
 HybridRouter
 .route('/server/deploy')
 .post(deployGitUrl)
+
+HybridRouter
+.route('/server/shutdown')
+.post(shutDown)
 
 HybridRouter
 .route('/test')
