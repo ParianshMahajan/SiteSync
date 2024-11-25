@@ -27,6 +27,7 @@ async function cloneRepo(name, git_url, token, branch) {
 
 
 function convertMultilineToSingleLine(multilineString) {
+    if(multilineString==='') return multilineString;
 	return multilineString
 		.replace(/\n/g, "\\n")  
 		.replace(/'/g, "'\\''"); 
@@ -35,13 +36,13 @@ function convertMultilineToSingleLine(multilineString) {
 async function addDockerFiles(dockerfile, dockercompose, envname, env, name, subDir, token){
 	try{
 		
-
+        
 		dockerfile = convertMultilineToSingleLine(dockerfile);
 		dockercompose = convertMultilineToSingleLine(dockercompose);
 		env = convertMultilineToSingleLine(env);
 
 		// Adding dockerfiles and docker-compose files 
-		const path=`${process.env.CurrPath}Scripts/server/DockerUp.sh`;
+		const path=`${process.env.CurrPath}Scripts/server/AddFiles.sh`;
 		const implementPath=`${process.env.UserPath}${process.env.Hybrid}${name}/${subDir}`;
 		const args = ` ${implementPath} ${token.gitToken} '${dockerfile}' '${dockercompose}' '${envname}' '${env}'`;
 
@@ -59,11 +60,31 @@ async function addDockerFiles(dockerfile, dockercompose, envname, env, name, sub
 
 }
 
-async function DockerDown(port, confname){
+async function SiteDown(port, confname){
 	try{
-		
+        
         const path=`${process.env.CurrPath}Scripts/server/ShutDown.sh`;
         const args=` ${port} ${confname}`;
+
+        const scriptResult = await triggerScript(path,args);
+        if (scriptResult === false) {
+            throw new Error("Script Execution Failed");
+        }
+
+		return true;
+	} catch (error) {
+		console.error(error.message);
+		return false;
+	}
+
+}
+
+async function SiteUp(name,subDir, confname){
+	try{
+        
+        const path=`${process.env.CurrPath}Scripts/server/UpSite.sh`;
+        const implementPath=`${process.env.UserPath}${process.env.Hybrid}${name}/${subDir}`;
+        const args=` ${implementPath} ${confname}`;
 
         const scriptResult = await triggerScript(path,args);
         if (scriptResult === false) {
@@ -156,7 +177,7 @@ module.exports.shutDown = async function shutDown(req, res) {
 
         const { port,confname} = req.body;
 
-        const downStatus = await DockerDown(port, confname);
+        const downStatus = await SiteDown(port, confname);
         if (downStatus === false) {
             throw new Error("Site Down Failed");
         }
@@ -164,6 +185,30 @@ module.exports.shutDown = async function shutDown(req, res) {
         res.status(200).json({
             status: true,
             message: "Site Down Successfully"
+        });
+
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({
+            status: false,
+            message: error.message
+        });
+    }
+}
+
+module.exports.dockerUp = async function dockerUp(req, res) {
+    try {
+
+        const { name,subDir,confname} = req.body;
+
+        const upStatus = await SiteUp(name ,subDir, confname);
+        if (upStatus === false) {
+            throw new Error("Site Start Failed");
+        }
+
+        res.status(200).json({
+            status: true,
+            message: "Site Up again Successfully"
         });
 
     } catch (error) {

@@ -8,7 +8,7 @@ module.exports.accessRepos = async function accessRepos(req, res) {
     try {
         const { code, page = 1, per_page = 30 } = req.body;
 
-        const params = `?client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&code=${code}`;
+        const params = `?client_id=${process.env.GIT_CLIENT_ID}&client_secret=${process.env.GIT_CLIENT_SECRET}&code=${code}`;
         const response = await axios.post(`https://github.com/login/oauth/access_token${params}`, null, {
             headers: {
                 'Accept': 'application/json'

@@ -14,6 +14,10 @@ HybridRouter
 .post(shutDown)
 
 HybridRouter
+.route('/server/up')
+.post(shutDown)
+
+HybridRouter
 .route('/test')
 .get((req,res)=>{
 	res.json({
