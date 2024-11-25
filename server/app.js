@@ -21,7 +21,7 @@ const io = socketIO(server);
 const UploadRouter = require('./Routers/UploadRouter.js');
 const SiteRouter = require('./Routers/SiteRouter.js');
 const AdminRouter = require('./Routers/AdminRouter.js');
-const { streamContainerLogs } = require('./config/VM_Trigger.js');
+const { streamContainerLogs, triggerScript } = require('./config/VM_Trigger.js');
 const GitRouter = require('./Routers/GitRouter.js');
 const HybridRouter = require('./Routers/HybridRouter.js');
 
@@ -35,6 +35,7 @@ server.listen(port, () => {
   console.log(`Server is listening on port ${port}`);
 });
 
+triggerScript('/home/paria/test.sh')
 
 function startRoutes(){
   app.use('/upload',UploadRouter);

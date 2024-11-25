@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const AdminModel = require("../Models/AdminModel");
 
 const connSettings = {
-  host: process.env.VMip,
+  host: process.env.VMdomain,
   port: 22,
   username: process.env.VMUserName,
   password: process.env.VMPassword,
